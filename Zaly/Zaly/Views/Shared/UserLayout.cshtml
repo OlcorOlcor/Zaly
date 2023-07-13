@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    @RenderSection("css", required: false);
+</head>
+<body>
+    <header>
+        <nav class="navigation">
+            <div class="left">
+                <a href="">Home</a>
+                <a href="">Leaderboards</a>
+            </div>
+            <div class="right">
+                <a href="">Profile</a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        @RenderBody();
+    </main>
+    <footer>
+
+    </footer>
+</body>
+@RenderSection("js", required: false);
+</html>
