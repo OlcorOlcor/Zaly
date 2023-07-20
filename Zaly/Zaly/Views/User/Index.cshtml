@@ -1,4 +1,8 @@
 ﻿@{
 	ViewData["Title"] = "Home";
+}
 
+
+@if(ViewBag.ErrorMess != null) {
+	@ViewBag.ErrorMess;
 }

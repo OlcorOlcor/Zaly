@@ -4,8 +4,13 @@ using Zaly.Models;
 
 namespace Zaly.Controllers {
 	public class UserController : Controller {
-		private readonly UserRepository _userRepository = new();
+		private readonly UserRepository _userRepository;
         public UserController() {
+			try { 
+				_userRepository = new();
+			} catch(Exception e) {
+				ViewBag.ErrorMess = e.Message;
+			}
 		}
         public IActionResult Index() {
 			return View();
