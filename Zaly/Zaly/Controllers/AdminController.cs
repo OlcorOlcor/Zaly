@@ -3,13 +3,20 @@ using Zaly.Models;
 
 namespace Zaly.Controllers {
 	public class AdminController : Controller {
-		readonly private DatabaseContext _context = new();
+		readonly private UserRepository _userRepository = new();
+		readonly private AdminRepository _adminRepository = new();
 		public IActionResult Index() {
-			this.ViewBag.Users = _context.User.ToList();
+			this.ViewBag.Users = _userRepository.GetAll();
 			return View();
 		}
-		public IActionResult Add() {
+		[HttpGet]
+		public IActionResult AddUser() {
 			return View();
+		}
+		[HttpPost]
+		public IActionResult AddUser(User user) {
+			_userRepository.Add(user);
+			return Redirect("Index");
 		}
 		public IActionResult Delete(int Id) {
 			//TODO
