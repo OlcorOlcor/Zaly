@@ -22,8 +22,19 @@ namespace Zaly.Controllers {
 			_userRepository.Delete(Id);
 			return Redirect("Index");
 		}
-		public IActionResult Edit() {
+		[HttpDelete]
+		public IActionResult EditUser(int Id) {
+			User user = _userRepository.FindById(Id)!;
+			if (user == null) {
+				return Redirect("Index");
+			}
+			this.ViewBag.User = user;
 			return View();
+		}
+		[HttpPost]
+		public IActionResult EditUser(User user) {
+			_userRepository.Update(user.Id, user);
+			return Redirect("Index");
 		}
 	}
 }
