@@ -36,5 +36,15 @@ namespace Zaly.Controllers {
 			_userRepository.Update(user.Id, user);
 			return Redirect("Index");
 		}
+		[HttpPost]
+		public IActionResult ChangePoints(int Id, int diff) {
+			var user = _userRepository.FindById(Id);
+			if (user == null) {
+				return Redirect("Index");
+			}
+			user.Points += diff;
+			_userRepository.Update(Id, user);
+			return Redirect("Index");
+		}
 	}
 }
