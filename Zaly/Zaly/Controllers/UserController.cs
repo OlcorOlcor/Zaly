@@ -4,21 +4,10 @@ using Zaly.Models;
 
 namespace Zaly.Controllers {
 	public class UserController : Controller {
-		private readonly DatabaseContext _context;
-		List<User> l;
-		string errormes = "nothing";
+		private readonly UserRepository _userRepository = new();
         public UserController() {
-			try {
-				_context = new();
-				l = _context.User.ToList();
-			} catch (Exception ex) {
-				this.errormes = ex.Message;
-			}
 		}
         public IActionResult Index() {
-			if (l != null)
-				this.ViewBag.l = l;
-			this.ViewBag.e = errormes;
 			return View();
 		}
 		public IActionResult Snake() {
