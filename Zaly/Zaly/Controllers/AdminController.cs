@@ -22,7 +22,7 @@ namespace Zaly.Controllers {
 			_userRepository.Delete(Id);
 			return Redirect("Index");
 		}
-		[HttpDelete]
+		[HttpGet]
 		public IActionResult EditUser(int Id) {
 			User user = _userRepository.FindById(Id)!;
 			if (user == null) {

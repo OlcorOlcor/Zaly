@@ -5,37 +5,37 @@
 	Layout = "AdminLayout";
 }
 
-<form asp-action="Edit" method="post">
+<form asp-action="EditUser" method="post">
 	<div class="form-group">
 		<label asp-for="Id">ID:</label>
-		<input class="form-control" asp-for="Id" disabled />
+		<input class="form-control" asp-for="Id" disabled value="@ViewBag.User.Id" />
 	</div>
 	<div class="form-group">
 		<label asp-for="Name">Name:</label>
-		<input class="form-control" asp-for="Name" />
+		<input class="form-control" asp-for="Name" value="@ViewBag.User.Name" />
 	</div>
 	<div class="form-group">
 		<label asp-for="Surname">Surname:</label>
-		<input class="form-control" asp-for="Surname" />
+		<input class="form-control" asp-for="Surname" value="@ViewBag.User.Surname" />
 	</div>
 	<div class="form-group">
 		<label asp-for="Nickname">Nickname:</label>
-		<input class="form-control" asp-for="Nickname"/>
+		<input class="form-control" asp-for="Nickname" value="@ViewBag.User.Nickname" />
 	</div>
 	<div class="form-group">
 		<label asp-for="Points">Points:</label>
-		<input class="form-control" asp-for="Points"/>
+		<input class="form-control" asp-for="Points" value="@ViewBag.User.Points" />
 	</div>
 	<div class="form-group">
 		<label asp-for="TeamId">Team ID:</label>
-		<input class="form-control" asp-for="TeamId" />
+		<input class="form-control" asp-for="TeamId" value="@ViewBag.User.TeamId" />
 	</div>
-	<div class="row">
+	<div class="row" style="margin-top: 30px">
 		<div class="col-sm">
-			<button class="btn btn-dark" button="button" asp-controller="Admin" asp-action="Index">Cancel</button>
+			<button class="btn btn-dark" button="button" asp-controller="Admin" asp-action="Index" style="width: 100%">Cancel</button>
 		</div>
 		<div class="col-sm">
-			<button class="btn btn-dark" button="submit">Edit</button>
+			<button class="btn btn-dark" button="submit" style="width: 100%">Edit</button>
 		</div>
 	</div>
 </form>

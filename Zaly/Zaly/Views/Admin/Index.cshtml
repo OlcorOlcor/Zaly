@@ -20,8 +20,8 @@
 			<td>@user.Nickname</td>
 			<td><strong>@user.Points.ToString()</strong></td>
 			<td>TODO: TEAM</td>
-			<td><button class="btn btn-primary" asp-controller="Admin" asp-action="EditUser" asp-route-Id="@user.Id">EDIT</button></td>
-			<td><button class="btn btn-alert" asp-controller="Admin" asp-action="DeleteUser" asp-route-Id="@user.Id">DELETE</button></td>
+			<td><a class="btn btn-primary" asp-controller="Admin" asp-action="EditUser" asp-route-Id="@user.Id">EDIT</a></td>
+			<td><a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteUser" asp-route-Id="@user.Id">DELETE</a></td>
 		</tr>
 	}
 </table>
