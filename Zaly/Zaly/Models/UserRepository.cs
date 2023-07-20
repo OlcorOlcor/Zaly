@@ -10,7 +10,7 @@
 			if (user is null) { 
 				return;
 			}
-			var a = _context.User.Remove(user);
+			_context.User.Remove(user);
 			_context.SaveChanges();
 		}
 
