@@ -19,7 +19,7 @@ namespace Zaly.Controllers {
 			return Redirect("Index");
 		}
 		public IActionResult Delete(int Id) {
-			//TODO
+			_userRepository.Delete(Id);
 			return Redirect("Index");
 		}
 		public IActionResult Edit() {
