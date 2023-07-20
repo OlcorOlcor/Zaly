@@ -1,12 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using Zaly.Models;
+
 namespace Zaly {
     public class Program {
         public static void Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
-
-            var app = builder.Build();
+			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment()) {
@@ -24,7 +25,7 @@ namespace Zaly {
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=User}/{action=Index}/{id?}");
 
             app.Run();
         }
