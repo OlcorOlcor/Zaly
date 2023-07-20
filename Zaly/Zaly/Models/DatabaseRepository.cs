@@ -8,11 +8,9 @@
 
 		public abstract void Delete(T entity);
 
-		public abstract T FindById(int id);
+		public abstract T? FindById(int id);
 
 		public abstract List<T> GetAll();
-
-		public abstract List<T> GetWhere(string condition);
 
 		public abstract void Update(int id, T entity);
 	}

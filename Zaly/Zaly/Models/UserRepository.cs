@@ -7,28 +7,38 @@
 
 		public override void Delete(int id) {
 			var user = FindById(id);
+			if (user is null) { 
+				return;
+			}
 			var a = _context.User.Remove(user);
 			_context.SaveChanges();
 		}
 
 		public override void Delete(User entity) {
-			throw new NotImplementedException();
+			_context.User.Remove(entity); 
+			_context.SaveChanges();
 		}
 
-		public override User FindById(int id) {
-			throw new NotImplementedException();
+		public override User? FindById(int id) {
+			return _context.User.Find(id);
 		}
 
 		public override List<User> GetAll() {
-			throw new NotImplementedException();
+			return _context.User.ToList();
 		}
-
-		public override List<User> GetWhere(string condition) {
-			throw new NotImplementedException();
-		}
-
 		public override void Update(int id, User entity) {
-			throw new NotImplementedException();
+			var dbUser = _context.User.Find(id);
+			if (dbUser is null) {
+				return;
+			}
+			dbUser.Name = entity.Name;
+			dbUser.Surname = entity.Surname;
+			dbUser.Points = entity.Points;
+			dbUser.Nickname = entity.Nickname;
+			dbUser.Password = entity.Password;
+			dbUser.TeamId = entity.TeamId;
+
+			_context.SaveChanges();
 		}
 	}
 }
