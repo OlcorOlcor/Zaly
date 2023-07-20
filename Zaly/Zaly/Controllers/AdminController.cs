@@ -18,7 +18,7 @@ namespace Zaly.Controllers {
 			_userRepository.Add(user);
 			return Redirect("Index");
 		}
-		public IActionResult Delete(int Id) {
+		public IActionResult DeleteUser(int Id) {
 			_userRepository.Delete(Id);
 			return Redirect("Index");
 		}
