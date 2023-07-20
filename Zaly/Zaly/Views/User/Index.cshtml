@@ -1,0 +1,11 @@
+﻿@{
+	ViewData["Title"] = "Home";
+
+}
+
+
+@if (ViewBag.l != null) { 
+	@ViewBag.l[0].Name
+} else {
+	@ViewBag.e
+}

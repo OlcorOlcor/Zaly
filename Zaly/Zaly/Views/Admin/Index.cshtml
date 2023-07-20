@@ -1,0 +1,27 @@
+﻿@{
+	Layout = "AdminLayout";
+	ViewData["Title"] = "Admin Home";
+}
+
+<table class="table table-striped">
+	<tr>
+	<td>Name</td>
+	<td>Surname</td>
+	<td>Nickname</td>
+	<td><strong>Points</strong></td>
+	<td>Team</td>
+	<td>Edit</td>
+	<td>Delete</td>
+	</tr>
+	@foreach(User user in ViewBag.Users) {
+		<tr>
+			<td>@user.Name</td>
+			<td>@user.Surname</td>
+			<td>@user.Nickname</td>
+			<td><strong>@user.Points.ToString()</strong></td>
+			<td>TODO: TEAM</td>
+			<td><button class="btn btn-primary" asp-controller="Admin" asp-action="Edit" asp-route-Id="@user.Id">EDIT</button></td>
+			<td><button class="btn btn-primary" asp-controller="Admin" asp-action="Delete" asp-route-Id="@user.Id">Delete</button></td>
+		</tr>
+	}
+</table>
