@@ -16,17 +16,17 @@ namespace Zaly.Controllers {
 		[HttpPost]
 		public IActionResult AddUser(User user) {
 			_userRepository.Add(user);
-			return Redirect("Index");
+			return RedirectToAction("Index");
 		}
 		public IActionResult DeleteUser(int Id) {
 			_userRepository.Delete(Id);
-			return Redirect("Index");
+			return RedirectToAction("Index");
 		}
 		[HttpGet]
 		public IActionResult EditUser(int Id) {
 			User user = _userRepository.FindById(Id)!;
 			if (user == null) {
-				return Redirect("Index");
+				return RedirectToAction("Index");
 			}
 			this.ViewBag.User = user;
 			return View();
@@ -34,17 +34,17 @@ namespace Zaly.Controllers {
 		[HttpPost]
 		public IActionResult EditUser(User user) {
 			_userRepository.Update(user.Id, user);
-			return Redirect("Index");
+			return RedirectToAction("Index");
 		}
 		[HttpPost]
 		public IActionResult ChangePoints(int Id, int diff) {
 			var user = _userRepository.FindById(Id);
 			if (user == null) {
-				return Redirect("Index");
+				return RedirectToAction("Index");
 			}
 			user.Points += diff;
 			_userRepository.Update(Id, user);
-			return Redirect("Index");
+			return RedirectToAction("Index");
 		}
 	}
 }
