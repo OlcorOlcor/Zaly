@@ -20,6 +20,8 @@
 			<td>@user.Nickname</td>
 			<td>
 				<strong>@user.Points.ToString()</strong> 
+				<a class="btn btn-primary" asp-controller="Admin" asp-action="ChangePoints" asp-route-Id="@user.Id" asp-route-diff="1">↑</a>
+				<a class="btn btn-primary" asp-controller="Admin" asp-action="ChangePoints" asp-route-Id="@user.Id" asp-route-diff="-1">↓</a>
 			</td>
 			<td>TODO: TEAM</td>
 			<td><a class="btn btn-primary" asp-controller="Admin" asp-action="EditUser" asp-route-Id="@user.Id">EDIT</a></td>
