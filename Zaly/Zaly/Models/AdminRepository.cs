@@ -1,4 +1,6 @@
-﻿namespace Zaly.Models {
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Zaly.Models {
 	public class AdminRepository : DatabaseRepository<Admin> {
 		public override void Add(Admin entity) {
 			_context.Admin.Add(entity);
@@ -37,5 +39,18 @@
 
 			_context.SaveChanges();
 		}
-	}
+
+        public Admin? Login(string Login, string Password) {
+            var admins = _context.Admin.FromSql($"Select * from Admin where Login = {Login}").ToList();
+            if (admins.Count() != 1) {
+                return null;
+            }
+            var admin = admins[0];
+            PasswordManager pm = new PasswordManager();
+            if (pm.VerifyPassword(Password, admin.Password.Substring(0, admin.Password.Length / 2), admin.Password.Substring(admin.Password.Length / 2, admin.Password.Length / 2))) {
+                return admin;
+            }
+            return null;
+        }
+    }
 }
