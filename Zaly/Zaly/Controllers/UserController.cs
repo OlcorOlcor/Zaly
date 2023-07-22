@@ -6,26 +6,58 @@ using Zaly.Models;
 namespace Zaly.Controllers {
 	public class UserController : Controller {
 		private readonly UserRepository _userRepository = new();
+		private bool CheckLogin() {
+            if (HttpContext.Session.GetString("login") != "true") {
+				ViewBag.Logged = false;
+				return false;
+            }
+			ViewBag.LoggedInUser = _userRepository.FindById((int)HttpContext.Session.GetInt32("userid")!);
+			ViewBag.Logged = true;
+			return true;
+        }
         public IActionResult Index() {
+			if (!CheckLogin()) {
+				return RedirectToAction("Login");
+			}
             return View();
 		}
 		public IActionResult Snake() {
-			return View();
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            return View();
 		}
 		public IActionResult Leaderboard() {
-			return View();
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            return View();
 		}
 		public IActionResult Profile() {
-			return View();
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            return View();
 		}
 		public IActionResult Player() {
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            return View();
+		}
+		[HttpGet]
+		public IActionResult ChangePassword() {
 			return View();
 		}
-
 		[HttpGet]
 		public IActionResult Login() {
-            ViewBag.LoginFailed = false;
-            return View();
+            if (!CheckLogin()) {
+				ViewBag.LoginFailed = false;
+				ViewBag.LoggedInUser = null;
+				return View();
+            } else {
+				return RedirectToAction("Index");
+			}
 		}
 		[HttpPost]
 		public IActionResult Login(string Login, string Password) {
@@ -35,6 +67,8 @@ namespace Zaly.Controllers {
 				ViewBag.Login = Login;
 				return View();
 			}
+			HttpContext.Session.SetString("login", "true");
+			HttpContext.Session.SetInt32("userid", user.Id);
 			return RedirectToAction("Index");
 		}
 	}

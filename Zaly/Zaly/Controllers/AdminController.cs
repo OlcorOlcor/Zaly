@@ -5,17 +5,36 @@ namespace Zaly.Controllers {
 	public class AdminController : Controller {
 		readonly private UserRepository _userRepository = new();
 		readonly private AdminRepository _adminRepository = new();
-		public IActionResult Index() {
-			this.ViewBag.Users = _userRepository.GetAll();
+        private bool CheckLogin() {
+            if (HttpContext.Session.GetString("login") != "true") {
+                ViewBag.Logged = false;
+                return false;
+            }
+            ViewBag.LoggedInAdmin = _adminRepository.FindById((int)HttpContext.Session.GetInt32("adminid")!);
+            ViewBag.Logged = true;
+            return true;
+        }
+
+        public IActionResult Index() {
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            this.ViewBag.Users = _userRepository.GetAll();
 			return View();
 		}
 		[HttpGet]
 		public IActionResult AddUser() {
-			return View();
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            return View();
 		}
 		[HttpPost]
 		public IActionResult AddUser(User user) {
-			PasswordManager pm = new PasswordManager();
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            PasswordManager pm = new PasswordManager();
 			var hashedPassword = pm.HashPassword(user.Name.ToLower() + user.Surname.ToLower(), out string salt);
 			user.Login = user.Name.ToLower() + user.Surname.ToLower();
 			user.Password = hashedPassword + salt;
@@ -23,12 +42,18 @@ namespace Zaly.Controllers {
 			return RedirectToAction("Index");
 		}
 		public IActionResult DeleteUser(int Id) {
-			_userRepository.Delete(Id);
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            _userRepository.Delete(Id);
 			return RedirectToAction("Index");
 		}
 		[HttpGet]
 		public IActionResult EditUser(int Id) {
-			User user = _userRepository.FindById(Id)!;
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            User user = _userRepository.FindById(Id)!;
 			if (user == null) {
 				return RedirectToAction("Index");
 			}
@@ -37,12 +62,18 @@ namespace Zaly.Controllers {
 		}
 		[HttpPost]
 		public IActionResult EditUser(User user) {
-			_userRepository.Update(user.Id, user);
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            _userRepository.Update(user.Id, user);
 			return RedirectToAction("Index");
 		}
 		[HttpGet]
 		public IActionResult ChangePoints(int Id, int diff) {
-			var user = _userRepository.FindById(Id);
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            var user = _userRepository.FindById(Id);
 			if (user == null) {
 				return RedirectToAction("Index");
 			}
@@ -50,5 +81,28 @@ namespace Zaly.Controllers {
 			_userRepository.Update(Id, user);
 			return RedirectToAction("Index");
 		}
-	}
+		[HttpGet]
+		public IActionResult Login() {
+            if (!CheckLogin()) {
+                ViewBag.LoginFailed = false;
+                ViewBag.LoggedInAdmin = null;
+                return View();
+            }
+            else {
+                return RedirectToAction("Index");
+            }	
+        }
+        [HttpPost]
+        public IActionResult Login(string Login, string Password) {
+            var admin = _adminRepository.Login(Login, Password);
+            if (admin is null) {
+                ViewBag.LoginFailed = true;
+                ViewBag.Login = Login;
+                return View();
+            }
+            HttpContext.Session.SetString("login", "true");
+            HttpContext.Session.SetInt32("adminid", admin.Id);
+            return RedirectToAction("Index");
+        }
+    }
 }
