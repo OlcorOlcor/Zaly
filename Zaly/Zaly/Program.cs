@@ -7,6 +7,7 @@ namespace Zaly {
             var builder = WebApplication.CreateBuilder(args);
 
 			builder.Services.AddControllersWithViews();
+            builder.Services.AddSession();
 
 			// Add services to the container.
 			var app = builder.Build();
@@ -20,6 +21,8 @@ namespace Zaly {
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseSession();
 
             app.UseRouting();
 
