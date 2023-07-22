@@ -15,6 +15,10 @@ namespace Zaly.Controllers {
 		}
 		[HttpPost]
 		public IActionResult AddUser(User user) {
+			PasswordManager pm = new PasswordManager();
+			var hashedPassword = pm.HashPassword(user.Name.ToLower() + user.Surname.ToLower(), out string salt);
+			user.Login = user.Name.ToLower() + user.Surname.ToLower();
+			user.Password = hashedPassword + salt;
 			_userRepository.Add(user);
 			return RedirectToAction("Index");
 		}
@@ -36,7 +40,7 @@ namespace Zaly.Controllers {
 			_userRepository.Update(user.Id, user);
 			return RedirectToAction("Index");
 		}
-		[HttpPost]
+		[HttpGet]
 		public IActionResult ChangePoints(int Id, int diff) {
 			var user = _userRepository.FindById(Id);
 			if (user == null) {

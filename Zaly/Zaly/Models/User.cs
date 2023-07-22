@@ -11,7 +11,7 @@ namespace Zaly.Models {
         [Required]
         public string Surname { get; set; } = "";
         [MinLength(1)]
-        public string Nickname { get; set; } = "";
+        public string Login { get; set; } = "";
         public int Points { get; set; }
         public string Password { get; set; } = "";
         public int TeamId { get; set; }
