@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+@if (ViewBag.LoginFailed) {
+    <p style="color: red; margin-bottom: 0">Zadali jste špatně jméno nebo heslo.</p>
+}
+<form asp-action="Login" method="post">
+    <div class="form-group">
+        <label for="Login">Login:</label>
+        <input type="Text" name="Login" id="Login" class="form-control" @(ViewBag.Login != null ? "value=" + ViewBag.Login : "value= ")></input>
+        <small>Křestné jméno + příjmení bez diakritiky</small>
+    </div>
+    <div class="form-group">
+        <label for="Password">Heslo:</label>
+        <input type="password" name="Password" id="Password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-dark" style="width: 100%; margin-top: 30px">Přihlásit</button>
+</form>

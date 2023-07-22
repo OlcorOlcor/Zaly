@@ -24,9 +24,11 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Leaderboard">Žebříček</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Profile">Profil</a>
-                        </li>
+                        @if (ViewBag.Logged) {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Profile">@ViewBag.LoggedInUser.Login</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
