@@ -47,8 +47,26 @@ namespace Zaly.Controllers {
 		}
 		[HttpGet]
 		public IActionResult ChangePassword() {
-			return View();
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            return View();
 		}
+		[HttpPost]
+		public IActionResult ChangePassword(string oldPassword, string newPassword, string newPasswordAgain) {
+            var user = _userRepository.Login(HttpContext.Session.GetString("login")!, oldPassword);
+            if (user is null) {
+				return View();
+			}
+			if (newPassword != newPasswordAgain) {
+				return View();
+			}					
+			PasswordManager pm = new PasswordManager();
+			var hashedPassword = pm.HashPassword(newPassword, out string salt);
+			user.Password = hashedPassword + salt;
+			_userRepository.Update(user.Id, user);
+			return RedirectToAction("Index");
+        }
 		[HttpGet]
 		public IActionResult Login() {
             if (!CheckLogin()) {
