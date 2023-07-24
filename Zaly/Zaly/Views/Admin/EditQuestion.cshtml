@@ -4,7 +4,7 @@
     Layout = "AdminLayout";
 }
 
-<form asp-action="EditQuestion" method="post">
+<form asp-action="EditQuestion" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Name">Name:</label>
         <input asp-for="Name" class="form-control" value="@ViewBag.Question.Name" required/>
@@ -20,13 +20,13 @@
     </div>
     <label asp-for="Multipart">Is the question Multipart?:</label>
         @if (ViewBag.Question.Multipart) {
-            <input type="checkbox" asp-for="Multipart" checked required>
+            <input type="checkbox" asp-for="Multipart" checked>
         } else {
-            <input type="checkbox" asp-for="Multipart" required>
+            <input type="checkbox" asp-for="Multipart">
         }
     <div class="form-group">
         <label asp-for="Answer">Answer:</label>
-        <input asp-for="Answer" class="form-control" />
+        <input asp-for="Answer" class="form-control" value="@ViewBag.Question.Answer"/>
     </div>
     <div class="form-group">
         <label asp-for="Image">Upload image to go along with the question (if it needs one)</label>
@@ -34,7 +34,7 @@
     </div>
     <div class="row">
         <div class="col-sm">
-            <button button="button" class="btn btn-dark" style="width: 100%" asp-controller="Admin" asp-controller="Index">Cancel</button>
+            <a button="button" class="btn btn-dark" style="width: 100%" asp-controller="Admin" asp-action="Index">Cancel</a>
         </div>
         <div class="col-sm">
             <button button="submit" class="btn btn-dark" style="width: 100%">Edit</button>

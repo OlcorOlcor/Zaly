@@ -89,6 +89,7 @@ namespace Zaly.Controllers
             if (!CheckLogin()) {
                 ViewBag.LoginFailed = false;
                 ViewBag.LoggedInAdmin = null;
+                ViewBag.Logged = false;
                 return View();
             }
             else {
@@ -172,7 +173,7 @@ namespace Zaly.Controllers
                 question.Img = question.Image.FileName;
             }
             _questionRepository.Update(question.Id, question);
-            return View();
+            return RedirectToAction("QuestionList");
         }
 
         public IActionResult DeleteQuestion(int Id) {
