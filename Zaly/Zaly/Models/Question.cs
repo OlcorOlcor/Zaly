@@ -7,5 +7,6 @@
         public bool Multipart { get; set; }
         public string Img { get; set; }
         public string Answer { get; set; }
+        public IFormFile Image { get; set; }
     }
 }
