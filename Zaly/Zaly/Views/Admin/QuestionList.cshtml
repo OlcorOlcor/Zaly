@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Questions";
+}
+
+<a asp-action="AddQuestion" asp-controller="Admin" class="btn btn-dakr">Add question</a>
+<table>
+    <tr>
+        <td>Name</td>
+        <td>Text</td>
+        <td>Points</td>
+        <td>Multipart</td>
+        <td>Img path</td>
+        <td>Answer</td>
+        <td>EDIT</td>
+        <td>DELETE</td>
+    </tr>
+    @foreach(Question question in ViewBag.Questions) {
+        <tr>
+            <td>@question.Name</td>
+            <td>@(question.Text.Substring(0, 100))...</td>
+            <td>@question.Points.ToString()</td>
+            <td>@(question.Multipart ? "Yes" : "No")</td>
+            <td>@question.Name</td>
+            <td>@(question.Answer.Substring(0, 100))...</td>
+            <td><a asp-action="EditQuestion" asp-controller="Admin" asp-route-Id="@question.Id" class="btn btn-dark">EDIT</a></td>
+            <td><a asp-action="DeleteQuestion" asp-controller="Admin" class="btn btn-danger">DELETE</a></td>
+        </tr>
+    }
+</table>
