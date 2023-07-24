@@ -152,13 +152,24 @@ namespace Zaly.Controllers
             if (question == null) {
                 return RedirectToAction("QuestionList");
             }
+
             ViewBag.Question = question;
             return View();
         }
         [HttpPost]
-        public IActionResult EditQuestion(Question question) {
+        public async Task<IActionResult> EditQuestion(Question question) {
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
+            }
+            if (question.Image is not null) {
+                string path = $"{Directory.GetCurrentDirectory()}/Img/";
+                if (question.Image.Length > 0) {
+                    string filePath = Path.Combine(path, question.Image.FileName);
+                    using (Stream fileStream = new FileStream(filePath, FileMode.Create)) {
+                        await question.Image.CopyToAsync(fileStream);
+                    }
+                }
+                question.Img = question.Image.FileName;
             }
             _questionRepository.Update(question.Id, question);
             return View();
