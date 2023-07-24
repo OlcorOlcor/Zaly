@@ -1,6 +1,7 @@
 ﻿@model Question
 @{
     ViewData["Title"] = "Add new Question";
+    Layout = "AdminLayout";
 }
 
 <form asp-action="AddQuestion" method="post">
@@ -18,8 +19,12 @@
         <small>The amount of points the user will be awarded with upon successful completion</small>
     </div>
     <div class="form-group">
-        <label asp-for="Multipart">Is the question Multipart?:</label>
-        <input asp-for="Multipart" class="form-control"/>
+        <label asp-for="Multipart">Is the question Multipart?</label>
+        <input asp-for="Multipart"/>
+    </div>
+    <div class="form-group">
+        <label asp-for="Answer">Answer:</label>
+        <input asp-for="Answer" class="form-control"/>
     </div>
     <div class="form-group">
         <label asp-for="Image">Upload image to go along with the question (if it needs one)</label>
