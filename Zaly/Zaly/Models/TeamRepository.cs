@@ -1,10 +1,14 @@
-﻿namespace Zaly.Models {
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Zaly.Models {
     public class TeamRepository : DatabaseRepository<Team> {
         public override void Add(Team entity) {
             _context.Team.Add(entity);
             _context.SaveChanges();
         }
-
+        public List<User> GetTeamUsers(Team entity) {
+            return  _context.User.FromSql($"SELECT * FROM USER u where u.TeamId = {entity.Id}").ToList();
+        }
         public override void Delete(int id) {
             var Team = FindById(id);
             if (Team is null) {
