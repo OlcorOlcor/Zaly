@@ -6,7 +6,7 @@
 <a asp-action="AddQuestion" asp-controller="Admin" class="btn btn-dakr">Add question</a>
 @if (ViewBag.Questions.Count != 0)
 {
-    <table>
+    <table class="table table-striped">
         <tr>
             <td>Name</td>
             <td>Text</td>
@@ -21,17 +21,13 @@
         {
             <tr>
                 <td>@question.Name</td>
-                <td>@(
-                question.Text.Substring(0, 100)
-                )...</td>
+                <td>@(question.Text.Length > 100 ? $"{question.Text.Substring(0, 100)}..." : question.Text) </td>
                 <td>@question.Points.ToString()</td>
                 <td>@(
                 question.Multipart ? "Yes" : "No"
                 )</td>
-                <td>@question.Name</td>
-                <td>@(
-                question.Answer.Substring(0, 100)
-                )...</td>
+                <td>@question.Img</td>
+                <td>@(question.Answer.Length > 100 ? $"{question.Answer.Substring(0, 100)}..." : question.Answer)</td>
                 <td><a asp-action="EditQuestion" asp-controller="Admin" asp-route-Id="@question.Id" class="btn btn-dark">EDIT</a></td>
                 <td><a asp-action="DeleteQuestion" asp-controller="Admin" class="btn btn-danger">DELETE</a></td>
             </tr>
