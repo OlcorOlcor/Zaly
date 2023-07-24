@@ -166,7 +166,7 @@ namespace Zaly.Controllers
 
         public IActionResult DeleteQuestion(int Id) {
             if (!CheckLogin()) {
-                return RedirectToAction("Legin");
+                return RedirectToAction("Login");
             }
             _questionRepository.Delete(Id);
             return RedirectToAction("QuestionList");
