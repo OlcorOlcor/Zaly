@@ -7,6 +7,7 @@ namespace Zaly.Controllers
     public class AdminController : Controller {
 		readonly private UserRepository _userRepository = new();
 		readonly private AdminRepository _adminRepository = new();
+        readonly private QuestionRepository _questionRepository = new();
         private bool CheckLogin() {
             if (HttpContext.Session.GetString("login") != "true") {
                 ViewBag.Logged = false;
@@ -106,6 +107,50 @@ namespace Zaly.Controllers
             HttpContext.Session.SetString("login", "true");
             HttpContext.Session.SetInt32("adminid", admin.Id);
             return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public IActionResult AddQuestion() {
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AddQuestion(Question question) {
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            _questionRepository.Add(question);
+
+            return RedirectToAction("QuestionList");
+        }
+        [HttpGet]
+        public IActionResult QuestionList() {
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            ViewBag.Questions = _questionRepository.GetAll();
+            return View();
+        }
+        [HttpGet]
+        public IActionResult EditQuestion(int Id) {
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            var question = _questionRepository.FindById(Id);
+            if (question == null) {
+                return RedirectToAction("QuestionList");
+            }
+            ViewBag.Question = question;
+            return View();
+        }
+        [HttpPost]
+        public IActionResult EditQuestion(Question question) {
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            _questionRepository.Update(question.Id, question);
+            return View();
         }
     }
 }
