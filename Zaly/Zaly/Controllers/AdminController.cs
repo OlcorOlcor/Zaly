@@ -116,17 +116,17 @@ namespace Zaly.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult AddQuestion(Question question) {
+        public async Task<IActionResult> AddQuestion(Question question) {
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
             }
 
             if (question.Image is not null) {
-                string path = $"{Directory.GetCurrentDirectory()}/../Img/";
+                string path = $"{Directory.GetCurrentDirectory()}/Img/";
                 if (question.Image.Length > 0) {
                     string filePath = Path.Combine(path, question.Image.FileName);
                     using (Stream fileStream = new FileStream(filePath, FileMode.Create)) {
-                        question.Image.CopyTo(fileStream);
+                        await question.Image.CopyToAsync(fileStream);
                     }
                 }
                 question.Img = question.Image.FileName; 
