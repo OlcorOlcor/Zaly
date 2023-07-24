@@ -4,7 +4,7 @@
     Layout = "AdminLayout";
 }
 
-<form asp-action="AddQuestion" method="post">
+<form asp-action="AddQuestion" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Name">Name:</label>
         <input asp-for="Name" class="form-control"/>
