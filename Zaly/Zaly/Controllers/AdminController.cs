@@ -163,5 +163,13 @@ namespace Zaly.Controllers
             _questionRepository.Update(question.Id, question);
             return View();
         }
+
+        public IActionResult DeleteQuestion(int Id) {
+            if (!CheckLogin()) {
+                return RedirectToAction("Legin");
+            }
+            _questionRepository.Delete(Id);
+            return RedirectToAction("QuestionList");
+        }
     }
 }
