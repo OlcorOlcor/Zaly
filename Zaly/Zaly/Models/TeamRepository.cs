@@ -7,7 +7,7 @@ namespace Zaly.Models {
             _context.SaveChanges();
         }
         public List<User> GetTeamUsers(Team entity) {
-            return  _context.User.FromSql($"SELECT * FROM USER u where u.TeamId = {entity.Id}").ToList();
+            return  _context.User.FromSql($"SELECT * FROM USER u WHERE u.TeamId = {entity.Id}").ToList();
         }
         public override void Delete(int id) {
             var Team = FindById(id);
