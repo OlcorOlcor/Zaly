@@ -85,6 +85,7 @@ namespace Zaly.Controllers
 			if (user is null) {
 				ViewBag.LoginFailed = true;
 				ViewBag.Login = Login;
+				ViewBag.Logged = false;
 				return View();
 			}
 			HttpContext.Session.SetString("login", "true");
