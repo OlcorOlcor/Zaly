@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Zaly.Models;
+using Zaly.Models.Database;
 
-namespace Zaly.Controllers {
-	public class AdminController : Controller {
+namespace Zaly.Controllers
+{
+    public class AdminController : Controller {
 		readonly private UserRepository _userRepository = new();
 		readonly private AdminRepository _adminRepository = new();
         private bool CheckLogin() {

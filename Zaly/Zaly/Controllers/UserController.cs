@@ -2,9 +2,11 @@
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System.Reflection.Metadata;
 using Zaly.Models;
+using Zaly.Models.Database;
 
-namespace Zaly.Controllers {
-	public class UserController : Controller {
+namespace Zaly.Controllers
+{
+    public class UserController : Controller {
 		private readonly UserRepository _userRepository = new();
 		private bool CheckLogin() {
             if (HttpContext.Session.GetString("login") != "true") {
