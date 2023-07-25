@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="container">
     <header>
@@ -22,7 +23,10 @@
                         </li>
                         @if (ViewBag.Logged) {
                             <li class="nav-item">
-                                @ViewBag.LoggedInAdmin.Name @ViewBag.LoggedInAdmin.Surname
+                                <p class="nav-link text-dark">@ViewBag.LoggedInAdmin.Name @ViewBag.LoggedInAdmin.Surname</p>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Logout">Logout</a>
                             </li>
                         }
                     </ul>
@@ -35,6 +39,7 @@
     </main>
     <footer>
     </footer>
-</body>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 @RenderSection("js", required: false)
+</body>
 </html>
