@@ -38,7 +38,7 @@ namespace Zaly.Controllers
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
             }
-            PasswordManager pm = new PasswordManager();
+            Hasher pm = new Hasher();
 			var hashedPassword = pm.HashPassword(user.Name.ToLower() + user.Surname.ToLower(), out string salt);
 			user.Login = user.Name.ToLower() + user.Surname.ToLower();
 			user.Password = hashedPassword + salt;
