@@ -203,6 +203,9 @@ namespace Zaly.Controllers
             }
             var multiparts = _questionRepository.GetMultipartAnswersForQuestion(Id);
             var question = _questionRepository.FindById(Id);
+            if (question is null) {
+                return RedirectToAction("QuestionList");
+            }
             ViewBag.Question = question;
             ViewBag.Multiparts = multiparts;    
             return View();
@@ -212,8 +215,16 @@ namespace Zaly.Controllers
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
             }
-
+            multipartAnswer.Id = 0;
             _multipartAnswerRepository.Add(multipartAnswer);
+            return RedirectToAction("AddMultipart");
+        }
+        [HttpGet]
+        public IActionResult DeleteMultipart(int Id) {
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            _multipartAnswerRepository.Delete(Id);
             return RedirectToAction("AddMultipart");
         }
 

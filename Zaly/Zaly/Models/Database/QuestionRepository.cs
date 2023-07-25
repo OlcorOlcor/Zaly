@@ -17,7 +17,7 @@ namespace Zaly.Models.Database {
                 return;
             }
             _context.Question.Remove(Question);
-            _context.SaveChanges();
+            _context.SaveChanges(); 
         }
 
         public List<MultipartAnswer> GetMultipartAnswersForQuestion(int QuestionId) {
@@ -57,6 +57,9 @@ namespace Zaly.Models.Database {
                 return null;
             }
             return codeList[0];
+        }
+        public List<Question> GetQuestionsForGivenUser(int userId) {
+            return _context.Question.FromSql($"SELECT q.* FROM Question q INNER JOIN UserToQuestion uq on q.Id = uq.QuestionId INNER JOIN User u on u.Id = uq.UserId WHERE u.Id = {userId}").ToList();
         }
     }
 }

@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Otázka";
+}
+
+<h2>@ViewBag.Question.Name</h2>
+@if (ViewBag.ImgPath != "") {
+    <img src="@ViewBag.ImgPath" alt="Question image"/>
+}
+<p>@ViewBag.Question.Text</p>
+<form asp-action="SimpleQuestion" method="post">
+    <div class="form-group">
+        <label for="answer">Vaše odpověď:</label>
+        <input id="answer" name="answer" class="form-control"/>
+    </div>
+    <input type="number" hidden name="Id" id="Id" value="@ViewBag.Question.Id"/>
+    <div class="row">
+        <div class="col-sm">
+            <a class="btn btn-dark" asp-action="Index" asp-controller="User" style="width: 100%">Zpět</a>
+        </div>
+        <div class="col-sm">
+            <button type="submit" class="btn btn-dark" style="width: 100%">Odeslat</button>
+        </div>
+    </div>
+</form>

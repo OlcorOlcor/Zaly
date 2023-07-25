@@ -16,7 +16,7 @@
             <tr>
                 <td>@ma.Answer</td>
                 <td>@(ma.Correct ? "YES" : "NO")</td>
-                <td><a asp-for="DeleteMultipart" class="btn btn-danger" asp-route-Id="@ma.Id">Delete</a></td>
+                <td><a asp-controller="Admin" asp-action="DeleteMultipart" class="btn btn-danger" asp-route-Id="@ma.Id">Delete</a></td>
             </tr>
         }
     </table>

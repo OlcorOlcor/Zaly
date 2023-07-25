@@ -3,6 +3,31 @@
 }
 
 
-@if(ViewBag.ErrorMess != null) {
-	@ViewBag.ErrorMess;
+@if (ViewBag.Questions.Count == 0) {
+	<p>Zatím jste nenašli žádnou otázku</p>
+} else {
+	<table class="table table-striped">
+		<tr>
+			<td>Jméno</td>
+			<td>Body</td>
+			<td></td>
+		</tr>
+		@{ int index = 0; }
+		@foreach (Question question in ViewBag.Questions) {
+			<tr>
+				<td>@question.Name</td>
+				<td>@question.Points</td>
+				@if (ViewBag.Completed[index]) {
+					<td>Vyřešeno</td>
+				} else {
+					@if (!question.Multipart) {
+						<td><a class="btn btn-dark" asp-action="SimpleQuestion" asp-route-code="@question.Code">Vyřešit</a></td>
+					} else {
+						<td><a class="btn btn-dark" asp-action="MultiChoiceQuestion" asp-route-code="@question.Code	">Vyřešit</a></td>
+					}
+				}	
+			</tr>
+			index++;
+		}
+	</table>
 }

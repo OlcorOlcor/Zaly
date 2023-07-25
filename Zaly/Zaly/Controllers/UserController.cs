@@ -9,6 +9,7 @@ namespace Zaly.Controllers
     public class UserController : Controller {
 		private readonly UserRepository _userRepository = new();
 		private readonly QuestionRepository _questionRepository = new();
+		private readonly UserToQuestionRepository _userToQuestionRepository = new();
         private bool CheckLogin() {
             if (HttpContext.Session.GetString("login") != "true") {
 				ViewBag.Logged = false;
@@ -22,6 +23,15 @@ namespace Zaly.Controllers
 			if (!CheckLogin()) {
 				return RedirectToAction("Login");
 			}
+			int userId = (int)HttpContext.Session.GetInt32("userid")!;
+			var questions = _questionRepository.GetQuestionsForGivenUser(userId);
+			List<bool> completed = new();
+			foreach (var question in questions) {
+				var link = _userToQuestionRepository.FindByFk(userId, question.Id);
+				completed.Add(link!.Completed);
+			}
+			ViewBag.Questions = questions;
+			ViewBag.Completed = completed;
             return View();
 		}
 		public IActionResult Snake() {
@@ -93,6 +103,9 @@ namespace Zaly.Controllers
 				ViewBag.Logged = false;
 				return View();
 			}
+			if (HttpContext.Session.GetString("QuestionCodeToRegister") is not null) {
+				RegisterQuestion(HttpContext.Session.GetString("QuestionCodeToRegister")!);
+			}
 			HttpContext.Session.SetString("login", "true");
 			HttpContext.Session.SetInt32("userid", user.Id);
 			return RedirectToAction("Index");
@@ -104,10 +117,13 @@ namespace Zaly.Controllers
             return RedirectToAction("Login");
         }
 		[HttpGet]
-		public IActionResult QuestionSimple(string code) {
+		public IActionResult SimpleQuestion(string code) {
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
             }
+
+			//TODO: Check if the question isn't already completed
+
             var question = _questionRepository.FindByCode(code);
 
 			if (question is null) {
@@ -115,12 +131,14 @@ namespace Zaly.Controllers
 			}
 			if (question.Img is not null || question.Img != "") {
 				ViewBag.ImgPath = $"~/Img/{question.Img}";
+			} else {
+				ViewBag.ImgPath = "";
 			}
 			ViewBag.Question = question;
 			return View();
 		}
 		[HttpPost]
-		public IActionResult QuestionSimple(int Id, string Answer) {
+		public IActionResult SimpleQuestion(int Id, string Answer) {
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
             }
@@ -129,15 +147,46 @@ namespace Zaly.Controllers
 				return RedirectToAction("Index");
 			}
 
+			var user = _userRepository.FindById((int)HttpContext.Session.GetInt32("userid")!);
 			if (Answer != question.Answer) {
 				ViewBag.Question = question;
 				ViewBag.Message = "Nesprávná odpověď";
+				user!.Points--;
+				_userRepository.Update(user.Id, user);
 				return View();
 			}
-			var user = _userRepository.FindById((int)HttpContext.Session.GetInt32("userid")!);
 			user!.Points += question.Points;
-			//TODO: make question complete for given user
+            _userRepository.Update(user.Id, user);
+			var link = _userToQuestionRepository.FindByFk(user.Id, question.Id);
+			if (link == null) {
+				return RedirectToAction("Index");
+			}
+			link.Completed = true;	
+			_userToQuestionRepository.Update(link.Id, link);
+            return RedirectToAction("Index");
+		}
+		[HttpGet]
+		public IActionResult RegisterQuestionToUser(string code) {
+            if (!CheckLogin()) {
+				HttpContext.Session.SetString("QuestionCodeToRegister", code);
+				return RedirectToAction("Login");
+            }
+			RegisterQuestion(code);
 			return RedirectToAction("Index");
+        }
+		private void RegisterQuestion(string code) {
+			var user = _userRepository.FindById((int)HttpContext.Session.GetInt32("userid")!);
+			var question = _questionRepository.FindByCode(code);
+			if (user is null || question is null) {
+				return;
+			}
+			if (_userToQuestionRepository.FindByFk(user.Id, question.Id) is not null) {
+				return;
+			}
+			var utq = new UserToQuestion();
+			utq.UserId = user.Id;
+			utq.QuestionId = question.Id;
+			_userToQuestionRepository.Add(utq);
 		}
 	}
 }
