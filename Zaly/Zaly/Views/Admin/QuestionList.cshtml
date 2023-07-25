@@ -13,6 +13,7 @@
             <td>Multipart</td>
             <td>Img path</td>
             <td>Answer</td>
+            <td>Add Option</td>
             <td>EDIT</td>
             <td>DELETE</td>
         </tr>
@@ -25,6 +26,11 @@
                 <td>@(question.Multipart ? "Yes" : "No")</td>
                 <td>@question.Img</td>
                 <td>@(question.Answer.Length > 100 ? $"{question.Answer.Substring(0, 100)}..." : question.Answer)</td>
+                <td>
+                    @if(question.Multipart) {
+                        <a asp-action="AddMultipart" asp-controller="Admin" asp-route-Id="@question.Id" class="btn btn-dark" asp-route-Id="@question.Id">Add option</a>
+                    }
+                </td>
                 <td><a asp-action="EditQuestion" asp-controller="Admin" asp-route-Id="@question.Id" class="btn btn-dark">EDIT</a></td>
                 <td><a asp-action="DeleteQuestion" asp-controller="Admin" asp-route-Id="@question.Id" class="btn btn-danger">DELETE</a></td>
             </tr>

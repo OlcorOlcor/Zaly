@@ -1,0 +1,42 @@
+﻿@model MultipartAnswer
+@{
+    ViewData["Title"] = "Add multipart answer";
+    Layout = "AdminLayout";
+}
+
+<h2 style="width: 100%; text-align: center">@ViewBag.Question.Text</h2>
+@if (ViewBag.Multiparts.Count != 0) {
+    <table class="table table-striped">
+        <tr>
+            <td>Answer</td>
+            <td>Correct</td>
+            <td>Delete</td>
+        </tr>
+        @foreach(MultipartAnswer ma in ViewBag.Multiparts) {
+            <tr>
+                <td>@ma.Answer</td>
+                <td>@(ma.Correct ? "YES" : "NO")</td>
+                <td><a asp-for="DeleteMultipart" class="btn btn-danger" asp-route-Id="@ma.Id">Delete</a></td>
+            </tr>
+        }
+    </table>
+}
+<form asp-action="AddMultipart" method="post">
+    <div class="form-group">
+        <label asp-for="Answer">Answer:</label>
+        <input asp-for="Answer" class="form-control" required/>
+    </div>
+    <div class="form-group">
+        <label asp-for="Correct">Correct:</label>
+        <input type="checkbox" asp-for="Correct"/>
+    </div>
+    <input asp-for="QuestionId" hidden value="@ViewBag.Question.Id"/>
+    <div class="row">
+        <div class="col-sm">
+            <a class="btn btn-dark" asp-action="QuestionList" asp-controller="Admin" style="width: 100%">Cancel</a>
+        </div>
+        <div class="col-sm">
+            <button class="btn btn-dark" type="submit" style="width: 100%">Add</button>
+        </div>
+    </div>
+</form>

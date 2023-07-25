@@ -8,6 +8,7 @@ namespace Zaly.Controllers
 		readonly private UserRepository _userRepository = new();
 		readonly private AdminRepository _adminRepository = new();
         readonly private QuestionRepository _questionRepository = new();
+        readonly private MultipartAnswerRepository _multipartAnswerRepository = new();
         private bool CheckLogin() {
             if (HttpContext.Session.GetString("AdminLogin") != "true") {
                 ViewBag.Logged = false;
@@ -184,7 +185,7 @@ namespace Zaly.Controllers
             _questionRepository.Update(question.Id, question);
             return RedirectToAction("QuestionList");
         }
-
+        [HttpGet]
         public IActionResult DeleteQuestion(int Id) {
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
@@ -192,5 +193,26 @@ namespace Zaly.Controllers
             _questionRepository.Delete(Id);
             return RedirectToAction("QuestionList");
         }
+        [HttpGet]
+        public IActionResult AddMultipart(int Id) {
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            var multiparts = _questionRepository.GetMultipartAnswersForQuestion(Id);
+            var question = _questionRepository.FindById(Id);
+            ViewBag.Question = question;
+            ViewBag.Multiparts = multiparts;    
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AddMultipart(MultipartAnswer multipartAnswer) {
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+
+            _multipartAnswerRepository.Add(multipartAnswer);
+            return RedirectToAction("AddMultipart");
+        }
+
     }
 }
