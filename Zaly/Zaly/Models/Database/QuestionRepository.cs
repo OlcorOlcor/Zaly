@@ -5,6 +5,10 @@ namespace Zaly.Models.Database {
         public override void Add(Question entity) {
             _context.Question.Add(entity);
             _context.SaveChanges();
+            
+            Hasher hasher = new Hasher();
+            entity.Code = hasher.HashCode(entity.Id);
+            Update(entity.Id, entity);
         }
 
         public override void Delete(int id) {
@@ -37,6 +41,7 @@ namespace Zaly.Models.Database {
             if (dbQuestion is null) {
                 return;
             }
+            dbQuestion.Code = entity.Code;
             dbQuestion.Name = entity.Name;
             dbQuestion.Text = entity.Text;
             dbQuestion.Multipart = entity.Multipart;
@@ -45,6 +50,13 @@ namespace Zaly.Models.Database {
             dbQuestion.Img = entity.Img;
 
             _context.SaveChanges();
+        }
+        public Question? FindByCode(string code) {
+            var codeList = _context.Question.FromSql($"SELECT * FROM Question WHERE code = {code}").ToList();
+            if (codeList.Count != 1) {
+                return null;
+            }
+            return codeList[0];
         }
     }
 }

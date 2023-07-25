@@ -142,6 +142,9 @@ namespace Zaly.Controllers
                 }
                 question.Img = question.Image.FileName; 
             }
+            Hasher hasher = new Hasher();
+            //question.Code = hasher.HashCode()
+
             _questionRepository.Add(question);
 
             return RedirectToAction("QuestionList");
