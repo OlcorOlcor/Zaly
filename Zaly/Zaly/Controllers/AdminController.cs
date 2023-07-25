@@ -9,7 +9,7 @@ namespace Zaly.Controllers
 		readonly private AdminRepository _adminRepository = new();
         readonly private QuestionRepository _questionRepository = new();
         private bool CheckLogin() {
-            if (HttpContext.Session.GetString("login") != "true") {
+            if (HttpContext.Session.GetString("AdminLogin") != "true") {
                 ViewBag.Logged = false;
                 return false;
             }
@@ -98,6 +98,9 @@ namespace Zaly.Controllers
         }
         [HttpPost]
         public IActionResult Login(string Login, string Password) {
+            if (CheckLogin()) {
+                return RedirectToAction("Index");
+            }
             var admin = _adminRepository.Login(Login, Password);
             if (admin is null) {
                 ViewBag.LoginFailed = true;
@@ -105,9 +108,15 @@ namespace Zaly.Controllers
                 ViewBag.Logged = false;
                 return View();
             }
-            HttpContext.Session.SetString("login", "true");
+            HttpContext.Session.SetString("AdminLogin", "true");
             HttpContext.Session.SetInt32("adminid", admin.Id);
             return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public IActionResult Logout() {
+            HttpContext.Session.Remove("AdminLogin");
+            HttpContext.Session.Remove("adminid");
+            return RedirectToAction("Login");
         }
         [HttpGet]
         public IActionResult AddQuestion() {
