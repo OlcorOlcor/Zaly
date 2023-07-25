@@ -8,7 +8,7 @@ namespace Zaly.Controllers
 {
     public class UserController : Controller {
 		private readonly UserRepository _userRepository = new();
-		private bool CheckLogin() {
+        private bool CheckLogin() {
             if (HttpContext.Session.GetString("login") != "true") {
 				ViewBag.Logged = false;
 				return false;
@@ -56,14 +56,18 @@ namespace Zaly.Controllers
 		}
 		[HttpPost]
 		public IActionResult ChangePassword(string oldPassword, string newPassword, string newPasswordAgain) {
-            var user = _userRepository.Login(HttpContext.Session.GetString("login")!, oldPassword);
+            if (!CheckLogin()) {
+				return RedirectToAction("Login");
+			}
+			
+			var user = _userRepository.Login(ViewBag.LoggedInUser.Login, oldPassword);
             if (user is null) {
-				return View();
+				return RedirectToAction("ChangePassword");
 			}
 			if (newPassword != newPasswordAgain) {
-				return View();
+				return RedirectToAction("ChangePassword");
 			}					
-			PasswordManager pm = new PasswordManager();
+			Hasher pm = new Hasher();
 			var hashedPassword = pm.HashPassword(newPassword, out string salt);
 			user.Password = hashedPassword + salt;
 			_userRepository.Update(user.Id, user);
@@ -92,5 +96,11 @@ namespace Zaly.Controllers
 			HttpContext.Session.SetInt32("userid", user.Id);
 			return RedirectToAction("Index");
 		}
+		[HttpGet]
+		public IActionResult Logout() {
+            HttpContext.Session.Remove("login");
+            HttpContext.Session.Remove("adminid");
+            return RedirectToAction("Login");
+        }
 	}
 }
