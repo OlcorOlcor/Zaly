@@ -13,19 +13,22 @@
 	<td>Edit</td>
 	<td>Delete</td>
 	</tr>
-	@foreach(var user in ViewBag.Users) {
-		<tr>
-			<td>@user.Name</td>
-			<td>@user.Surname</td>
-			<td>@user.Login</td>
-			<td>
-				<strong>@user.Points.ToString()</strong> 
-				<a class="btn btn-primary" asp-controller="Admin" asp-action="ChangePoints" asp-route-Id="@user.Id" asp-route-diff="1">↑</a>
-				<a class="btn btn-primary" asp-controller="Admin" asp-action="ChangePoints" asp-route-Id="@user.Id" asp-route-diff="-1">↓</a>
-			</td>	
-			<td>TODO: TEAM</td>
-			<td><a class="btn btn-primary" asp-controller="Admin" asp-action="EditUser" asp-route-Id="@user.Id">EDIT</a></td>
-			<td><a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteUser" asp-route-Id="@user.Id">DELETE</a></td>
-		</tr>
+	@if (ViewBag.Users.Count != 0) {
+		@foreach (var user in ViewBag.Users)
+		{
+			<tr>
+				<td>@user.Name</td>
+				<td>@user.Surname</td>
+				<td>@user.Login</td>
+				<td>
+					<strong>@user.Points.ToString()</strong> 
+					<a class="btn btn-primary" asp-controller="Admin" asp-action="ChangePoints" asp-route-Id="@user.Id" asp-route-diff="1">↑</a>
+					<a class="btn btn-primary" asp-controller="Admin" asp-action="ChangePoints" asp-route-Id="@user.Id" asp-route-diff="-1">↓</a>
+				</td>	
+				<td>TODO: TEAM</td>
+				<td><a class="btn btn-primary" asp-controller="Admin" asp-action="EditUser" asp-route-Id="@user.Id">EDIT</a></td>
+				<td><a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteUser" asp-route-Id="@user.Id">DELETE</a></td>
+			</tr>
+		}
 	}
 </table>
