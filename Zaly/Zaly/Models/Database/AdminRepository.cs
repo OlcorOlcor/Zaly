@@ -58,7 +58,7 @@ namespace Zaly.Models.Database
                 return null;
             }
             var admin = admins[0];
-            PasswordManager pm = new PasswordManager();
+            Hasher pm = new Hasher();
             if (pm.VerifyPassword(Password, admin.Password.Substring(0, admin.Password.Length / 2), admin.Password.Substring(admin.Password.Length / 2, admin.Password.Length / 2)))
             {
                 return admin;

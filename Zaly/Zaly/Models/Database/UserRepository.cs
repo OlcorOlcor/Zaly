@@ -62,7 +62,7 @@ namespace Zaly.Models.Database
                 return null;
             }
             var user = users[0];
-            PasswordManager pm = new PasswordManager();
+            Hasher pm = new Hasher();
             if (pm.VerifyPassword(Password, user.Password.Substring(0, user.Password.Length / 2), user.Password.Substring(user.Password.Length / 2, user.Password.Length / 2)))
             {
                 return user;
