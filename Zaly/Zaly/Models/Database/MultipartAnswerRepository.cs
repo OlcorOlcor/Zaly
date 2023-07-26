@@ -39,5 +39,8 @@ namespace Zaly.Models.Database {
 
             _context.SaveChanges();
         }
+        public List<MultipartAnswer> FindByFk(int Id) {
+            return _context.MultipartAnswer.FromSql($"SELECT * FROM MultipartAnswer WHERE QuestionId = {Id}").ToList();
+        }
     }
 }

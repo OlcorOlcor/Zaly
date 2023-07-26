@@ -23,7 +23,7 @@
 					@if (!question.Multipart) {
 						<td><a class="btn btn-dark" asp-action="SimpleQuestion" asp-route-code="@question.Code">Vyřešit</a></td>
 					} else {
-						<td><a class="btn btn-dark" asp-action="MultiChoiceQuestion" asp-route-code="@question.Code	">Vyřešit</a></td>
+						<td><a class="btn btn-dark" asp-action="MultiQuestion" asp-route-code="@question.Code">Vyřešit</a></td>
 					}
 				}	
 			</tr>

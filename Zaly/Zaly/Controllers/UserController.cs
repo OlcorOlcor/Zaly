@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using System.Collections.Generic;
 using System.Reflection.Metadata;
 using Zaly.Models;
 using Zaly.Models.Database;
@@ -10,6 +11,7 @@ namespace Zaly.Controllers
 		private readonly UserRepository _userRepository = new();
 		private readonly QuestionRepository _questionRepository = new();
 		private readonly UserToQuestionRepository _userToQuestionRepository = new();
+		private readonly MultipartAnswerRepository _multipartAnswerRepository = new();
         private bool CheckLogin() {
             if (HttpContext.Session.GetString("login") != "true") {
 				ViewBag.Logged = false;
@@ -121,16 +123,17 @@ namespace Zaly.Controllers
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
             }
-
-			//TODO: Check if the question isn't already completed
-
             var question = _questionRepository.FindByCode(code);
 
-			if (question is null) {
+			if (question is null || question.Multipart) {
 				return RedirectToAction("Index");
 			}
-			if (question.Img is not null || question.Img != "") {
-				ViewBag.ImgPath = $"~/Img/{question.Img}";
+			var link = _userToQuestionRepository.FindByFk((int)HttpContext.Session.GetInt32("userid")!, question.Id);
+			if (link is null || link.Completed) {
+				return RedirectToAction("Index");
+			}
+			if (question.Img is not null && question.Img != "") {
+				ViewBag.ImgPath = $"/Img/{question.Img}";
 			} else {
 				ViewBag.ImgPath = "";
 			}
@@ -143,7 +146,7 @@ namespace Zaly.Controllers
                 return RedirectToAction("Login");
             }
 			var question = _questionRepository.FindById(Id);
-			if (question == null) {
+			if (question == null || question.Multipart) {
 				return RedirectToAction("Index");
 			}
 
@@ -153,7 +156,13 @@ namespace Zaly.Controllers
 				ViewBag.Message = "Nesprávná odpověď";
 				user!.Points--;
 				_userRepository.Update(user.Id, user);
-				return View();
+                if (question.Img is not null || question.Img != "") {
+                    ViewBag.ImgPath = $"/Img/{question.Img}";
+                }
+                else {
+                    ViewBag.ImgPath = "";
+                }
+                return View();
 			}
 			user!.Points += question.Points;
             _userRepository.Update(user.Id, user);
@@ -163,6 +172,73 @@ namespace Zaly.Controllers
 			}
 			link.Completed = true;	
 			_userToQuestionRepository.Update(link.Id, link);
+            return RedirectToAction("Index");
+		}
+		[HttpGet]
+		public IActionResult MultiQuestion(string code) {
+			if (!CheckLogin()) {
+				return RedirectToAction("Login");
+			}
+			var question = _questionRepository.FindByCode(code);
+			if (question == null || !question.Multipart) {
+				return RedirectToAction("Index");
+			}
+			var options = _multipartAnswerRepository.FindByFk(question.Id);
+
+			//SHUFFLE LIST - TODO: extract
+			Random rng = new Random();
+            int n = options.Count;
+            while (n > 1) {
+                n--;
+                int k = rng.Next(n + 1);
+                var value = options[k];
+                options[k] = options[n];
+                options[n] = value;
+            }
+            if (question.Img is not null || question.Img != "") {
+                ViewBag.ImgPath = $"/Img/{question.Img}";
+            }
+            else {
+                ViewBag.ImgPath = "";
+            }
+            ViewBag.Question = question;
+			ViewBag.Options = options;
+			return View();
+		}
+		[HttpPost]
+		public IActionResult MultiQuestion(int Id, string Answer) {
+            if(!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            var question = _questionRepository.FindById(Id);
+            if (question == null || !question.Multipart) {
+                return RedirectToAction("Index");
+            }
+
+            var user = _userRepository.FindById((int)HttpContext.Session.GetInt32("userid")!);
+            if (Answer != question.Answer) {
+                ViewBag.Question = question;
+                ViewBag.Message = "Nesprávná odpověď";
+                user!.Points--;
+                _userRepository.Update(user.Id, user);
+                var options = _multipartAnswerRepository.FindByFk(question.Id);
+				ViewBag.Options = options;
+                if (question.Img is not null || question.Img != "") {
+                    ViewBag.ImgPath = $"/Img/{question.Img}";
+                }
+                else {
+                    ViewBag.ImgPath = "";
+                }
+                return View();
+            }
+            user!.Points += question.Points;
+            _userRepository.Update(user.Id, user);
+            var link = _userToQuestionRepository.FindByFk(user.Id, question.Id);
+            if (link == null) {
+                return RedirectToAction("Index");
+            }
+            link.Completed = true;
+            _userToQuestionRepository.Update(link.Id, link);
             return RedirectToAction("Index");
 		}
 		[HttpGet]

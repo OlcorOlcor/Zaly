@@ -133,7 +133,7 @@ namespace Zaly.Controllers
             }
 
             if (question.Image is not null) {
-                string path = $"{Directory.GetCurrentDirectory()}/Img/";
+                string path = $"{Directory.GetCurrentDirectory()}/wwwroot/Img/";
                 if (question.Image.Length > 0) {
                     string filePath = Path.Combine(path, question.Image.FileName);
                     using (Stream fileStream = new FileStream(filePath, FileMode.Create)) {
@@ -142,8 +142,6 @@ namespace Zaly.Controllers
                 }
                 question.Img = question.Image.FileName; 
             }
-            Hasher hasher = new Hasher();
-            //question.Code = hasher.HashCode()
 
             _questionRepository.Add(question);
 

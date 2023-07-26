@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Multichoice Otázka";
+    Random random = new Random();
+}
+
+<h2>@ViewBag.Question.Name</h2>
+@if (ViewBag.ImgPath != null && ViewBag.ImgPath != "") {
+    <img src="@ViewBag.ImgPath" alt="Question image" />
+}
+<p>@ViewBag.Question.Text</p>
+<form asp-action="MultiQuestion" method="post">
+    @{
+        int i = random.Next(ViewBag.Options.Count + 1);
+        int index = 1;
+    }
+    @if (i == 0) {
+        <div class="form-group">
+            <label for="@ViewBag.Question.Answer">@ViewBag.Question.Answer</label>
+            <input type="radio" name="Answer" value="@ViewBag.Question.Answer" />
+        </div>
+    }
+    @foreach (var option in ViewBag.Options) {
+        <div class="form-group">
+            <label for="@option.Answer">@option.Answer</label>
+            <input type="radio" name="Answer" value="@option.Answer" />
+        </div>
+        if (i == index && i != 0) {
+            <div class="form-group">
+                <label for="@ViewBag.Question.Answer">@ViewBag.Question.Answer</label>
+                <input type="radio" name="Answer" value="@ViewBag.Question.Answer" id="@ViewBag.Question.Answer" />
+            </div>
+        }
+        index++;
+    }
+    <input type="number" hidden id="Id" name="Id" value="@ViewBag.Question.Id" />
+    @if (ViewBag.Message != null && ViewBag.Message != "") {
+        <p style="color: red">Špatná odpověď</p>
+    }
+    <div class="row">
+        <div class="col-sm">
+            <a asp-action="Index" asp-controller="User" class="btn btn-dark" style="width: 100%">Zpět</a>
+        </div>
+        <div class="col-sm">
+            <button type="submit" class="btn btn-dark" style="width: 100%">Odeslat</button>
+        </div>
+    </div>
+</form>

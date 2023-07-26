@@ -59,7 +59,7 @@ namespace Zaly.Models.Database {
             return codeList[0];
         }
         public List<Question> GetQuestionsForGivenUser(int userId) {
-            return _context.Question.FromSql($"SELECT q.* FROM Question q INNER JOIN UserToQuestion uq on q.Id = uq.QuestionId INNER JOIN User u on u.Id = uq.UserId WHERE u.Id = {userId}").ToList();
+            return _context.Question.FromSql($"SELECT DISTINCT q.* FROM Question q INNER JOIN UserToQuestion uq on q.Id = uq.QuestionId INNER JOIN User u on u.Id = uq.UserId WHERE u.Id = {userId}").ToList();
         }
     }
 }
