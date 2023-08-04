@@ -18,12 +18,16 @@ namespace Zaly.Models.Database
             {
                 return;
             }
-            _context.User.Remove(user);
-            _context.SaveChanges();
+            Delete(user);
         }
 
         public override void Delete(User entity)
         {
+            var links = _context.UserToQuestion.FromSql($"SELECT * FROM UserToQuestion WHERE UserId = {entity.Id}").ToList();
+            if (links.Count != 0) {
+                _context.UserToQuestion.RemoveRange(links);
+                _context.SaveChanges();
+            }
             _context.User.Remove(entity);
             _context.SaveChanges();
         }
@@ -48,7 +52,9 @@ namespace Zaly.Models.Database
             dbUser.Surname = entity.Surname;
             dbUser.Points = entity.Points;
             dbUser.Login = entity.Name.ToLower() + entity.Surname.ToLower();
-            dbUser.Password = entity.Password;
+            if (entity.Password != null && entity.Password != "") { 
+                dbUser.Password = entity.Password;
+            }
             dbUser.TeamId = entity.TeamId;
 
             _context.SaveChanges();
