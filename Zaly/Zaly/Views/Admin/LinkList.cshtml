@@ -1,0 +1,7 @@
+﻿@{
+    Layout = "AdminLayout";
+}
+
+@foreach (Question question in ViewBag.Questions) {
+    <p>https://celovsky.com/User/RegisterQuestionToUser?code=@question.Code</p>
+}

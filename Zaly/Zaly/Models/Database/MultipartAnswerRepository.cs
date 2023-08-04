@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace Zaly.Models.Database {
-    public class MultipartAnswerRepository : DatabaseRepository<MultipartAnswer> {
+    public sealed class MultipartAnswerRepository : DatabaseRepository<MultipartAnswer> {
         public override void Add(MultipartAnswer entity) {
             _context.MultipartAnswer.Add(entity);
             _context.SaveChanges();

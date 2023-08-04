@@ -2,7 +2,7 @@
 
 namespace Zaly.Models.Database
 {
-    public class AdminRepository : DatabaseRepository<Admin>
+    public sealed class AdminRepository : DatabaseRepository<Admin>
     {
         public override void Add(Admin entity)
         {

@@ -2,7 +2,7 @@
 
 namespace Zaly.Models.Database
 {
-    public class TeamRepository : DatabaseRepository<Team>
+    public sealed class TeamRepository : DatabaseRepository<Team>
     {
         public override void Add(Team entity)
         {
@@ -49,6 +49,9 @@ namespace Zaly.Models.Database
             dbTeam.Name = entity.Name;
 
             _context.SaveChanges();
+        }
+        public int GetTeamPoints(int teamId) {
+            return _context.User.FromSql($"SELECT u.* FROM User u INNER JOIN Team t on t.Id = u.TeamId WHERE t.Id = {teamId}").Sum(x => x.Points);
         }
     }
 }

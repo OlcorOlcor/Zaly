@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace Zaly.Models.Database {
-    public class UserToQuestionRepository : DatabaseRepository<UserToQuestion> {
+    public sealed class UserToQuestionRepository : DatabaseRepository<UserToQuestion> {
         public override void Add(UserToQuestion entity) {
             _context.UserToQuestion.Add(entity);
             _context.SaveChanges();

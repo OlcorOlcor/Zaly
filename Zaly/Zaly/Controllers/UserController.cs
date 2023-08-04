@@ -12,6 +12,7 @@ namespace Zaly.Controllers
 		private readonly QuestionRepository _questionRepository = new();
 		private readonly UserToQuestionRepository _userToQuestionRepository = new();
 		private readonly MultipartAnswerRepository _multipartAnswerRepository = new();
+		private readonly TeamRepository _teamRepository = new();
         private bool CheckLogin() {
             if (HttpContext.Session.GetString("login") != "true") {
 				ViewBag.Logged = false;
@@ -46,15 +47,18 @@ namespace Zaly.Controllers
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
             }
+			var users = _userRepository.GetAll().OrderByDescending(x => x.Points);
+			var teams = _teamRepository.GetAll();
+			List<int> teamPoints = new();
+			foreach (var team in teams) {
+				teamPoints.Add(_teamRepository.GetTeamPoints(team.Id));
+			}
+			ViewBag.Users = users;
+			ViewBag.Teams = teams;
+			ViewBag.TeamPoints = teamPoints;
             return View();
 		}
 		public IActionResult Profile() {
-            if (!CheckLogin()) {
-                return RedirectToAction("Login");
-            }
-            return View();
-		}
-		public IActionResult Player() {
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
             }
@@ -65,8 +69,8 @@ namespace Zaly.Controllers
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
             }
-            return View();
-		}
+			return View();
+        }
 		[HttpPost]
 		public IActionResult ChangePassword(string oldPassword, string newPassword, string newPasswordAgain) {
             if (!CheckLogin()) {
@@ -105,11 +109,11 @@ namespace Zaly.Controllers
 				ViewBag.Logged = false;
 				return View();
 			}
+			HttpContext.Session.SetString("login", "true");
+			HttpContext.Session.SetInt32("userid", user.Id);
 			if (HttpContext.Session.GetString("QuestionCodeToRegister") is not null) {
 				RegisterQuestion(HttpContext.Session.GetString("QuestionCodeToRegister")!);
 			}
-			HttpContext.Session.SetString("login", "true");
-			HttpContext.Session.SetInt32("userid", user.Id);
 			return RedirectToAction("Index");
 		}
 		[HttpGet]
@@ -151,11 +155,9 @@ namespace Zaly.Controllers
 			}
 
 			var user = _userRepository.FindById((int)HttpContext.Session.GetInt32("userid")!);
-			if (Answer != question.Answer) {
+			if (!Answer.ToLower().Trim().Equals(question.Answer.ToLower().Trim())) {
 				ViewBag.Question = question;
 				ViewBag.Message = "Nesprávná odpověď";
-				user!.Points--;
-				_userRepository.Update(user.Id, user);
                 if (question.Img is not null || question.Img != "") {
                     ViewBag.ImgPath = $"/Img/{question.Img}";
                 }
@@ -183,8 +185,11 @@ namespace Zaly.Controllers
 			if (question == null || !question.Multipart) {
 				return RedirectToAction("Index");
 			}
+			var link = _userToQuestionRepository.FindByFk((int)HttpContext.Session.GetInt32("userid")!, question.Id);
+			if (link is null || link.Completed) {
+				return RedirectToAction("Index");
+			}
 			var options = _multipartAnswerRepository.FindByFk(question.Id);
-
 			//SHUFFLE LIST - TODO: extract
 			Random rng = new Random();
             int n = options.Count;
@@ -216,7 +221,7 @@ namespace Zaly.Controllers
             }
 
             var user = _userRepository.FindById((int)HttpContext.Session.GetInt32("userid")!);
-            if (Answer != question.Answer) {
+            if (!Answer.ToLower().Trim().Equals(question.Answer.ToLower().Trim())) {
                 ViewBag.Question = question;
                 ViewBag.Message = "Nesprávná odpověď";
                 user!.Points--;
@@ -231,14 +236,14 @@ namespace Zaly.Controllers
                 }
                 return View();
             }
-            user!.Points += question.Points;
-            _userRepository.Update(user.Id, user);
             var link = _userToQuestionRepository.FindByFk(user.Id, question.Id);
-            if (link == null) {
+            if (link == null || link.Completed) {
                 return RedirectToAction("Index");
             }
             link.Completed = true;
             _userToQuestionRepository.Update(link.Id, link);
+            user!.Points += question.Points;
+            _userRepository.Update(user.Id, user);
             return RedirectToAction("Index");
 		}
 		[HttpGet]
@@ -263,6 +268,26 @@ namespace Zaly.Controllers
 			utq.UserId = user.Id;
 			utq.QuestionId = question.Id;
 			_userToQuestionRepository.Add(utq);
+		}
+		[HttpGet]
+		public IActionResult Dud() {
+			return View();
+		}
+		[HttpGet]
+		public IActionResult Dud2() {
+			return View();
+		}
+		[HttpGet]
+		public IActionResult Dud3() {
+			return View();
+		}
+		[HttpGet]
+		public IActionResult Dud4() {
+			return View();
+		}
+		[HttpGet]
+		public IActionResult Dud5() {
+			return View();
 		}
 	}
 }

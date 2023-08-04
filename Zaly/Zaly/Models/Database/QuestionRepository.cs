@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace Zaly.Models.Database {
-    public class QuestionRepository : DatabaseRepository<Question> {
+    public sealed class QuestionRepository : DatabaseRepository<Question> {
         public override void Add(Question entity) {
             _context.Question.Add(entity);
             _context.SaveChanges();
@@ -41,7 +41,6 @@ namespace Zaly.Models.Database {
             if (dbQuestion is null) {
                 return;
             }
-            dbQuestion.Code = entity.Code;
             dbQuestion.Name = entity.Name;
             dbQuestion.Text = entity.Text;
             dbQuestion.Multipart = entity.Multipart;

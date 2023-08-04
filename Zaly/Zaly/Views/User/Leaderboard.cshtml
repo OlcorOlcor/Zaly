@@ -1,5 +1,36 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Žebříček";
 }
+<h1>Hráči:</h1>
+<table class="table table-striped">
+    <tr>
+        <td>Jméno</td>
+        <td>Příjmení</td>
+        <td>Body</td>
+    </tr>
+    @foreach (User user in ViewBag.Users) {
+        <tr>
+            <td>@user.Name</td>
+            <td>@user.Surname</td>
+            <td>@user.Points</td>
+        </tr>
+    }
+</table>
+<h1>Týmy:</h1>
+<table class="table table-striped">
+    <tr>
+        <td>Jméno týmu</td>
+        <td>Body</td>
+    </tr>
+    @{
+        int index = 0;
+    }
+    @foreach (Team team in ViewBag.Teams) {
+        <tr>
+            <td>@team.Name</td>
+            <td>@ViewBag.TeamPoints[index]</td>
+        </tr>
+        index++;
+    }
+</table>
+<a asp-action="Index" asp-controller="User" class="btn btn-dark">Zpět</a>

@@ -174,7 +174,7 @@ namespace Zaly.Controllers
                 return RedirectToAction("Login");
             }
             if (question.Image is not null) {
-                string path = $"{Directory.GetCurrentDirectory()}/Img/";
+                string path = $"{Directory.GetCurrentDirectory()}/wwwroot/Img/";
                 if (question.Image.Length > 0) {
                     string filePath = Path.Combine(path, question.Image.FileName);
                     using (Stream fileStream = new FileStream(filePath, FileMode.Create)) {
@@ -224,6 +224,14 @@ namespace Zaly.Controllers
             }
             _multipartAnswerRepository.Delete(Id);
             return RedirectToAction("AddMultipart");
+        }
+        [HttpGet]
+        public IActionResult LinkList() {
+            if (!CheckLogin()) {
+                return RedirectToAction("Login");
+            }
+            ViewBag.Questions = _questionRepository.GetAll();
+            return View();
         }
 
     }
