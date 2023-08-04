@@ -9,6 +9,7 @@ namespace Zaly.Controllers
 		readonly private AdminRepository _adminRepository = new();
         readonly private QuestionRepository _questionRepository = new();
         readonly private MultipartAnswerRepository _multipartAnswerRepository = new();
+        readonly private TeamRepository _teamRepository = new();
         private bool CheckLogin() {
             if (HttpContext.Session.GetString("AdminLogin") != "true") {
                 ViewBag.Logged = false;
@@ -24,6 +25,9 @@ namespace Zaly.Controllers
                 return RedirectToAction("Login");
             }
             this.ViewBag.Users = _userRepository.GetAll();
+            var teams = _teamRepository.GetAll();
+            Dictionary<int, Team> teamDictionary = teams.ToDictionary(t => t.Id);
+            this.ViewBag.Teams = teamDictionary;
 			return View();
 		}
 		[HttpGet]
