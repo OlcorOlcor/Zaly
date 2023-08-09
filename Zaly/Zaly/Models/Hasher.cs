@@ -31,7 +31,11 @@ namespace Zaly.Models {
                      .ToArray();
         }
         public string HashCode(int Id) {
-            const string salt = "1BDD79E43A748308A9CFEC6F8F9751C372CEF9AF10AE927B36F49AFCF580438A7537A5F76F52573DA4836C6CCDF323CCD48495945B8D3F768C95428D8EE53488";
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json")
+                .Build();
+            string salt = configuration.GetConnectionString("CodeSalt")!;
             const int size = 16;
             byte[] codeSalt = DecodeSalt(salt);
             var hash = Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(Id.ToString()), codeSalt, _numberOfIterations, _algorithm, size);
