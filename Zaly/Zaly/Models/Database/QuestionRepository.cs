@@ -3,8 +3,9 @@
 namespace Zaly.Models.Database {
     public sealed class QuestionRepository : DatabaseRepository<Question> {
         public override void Add(Question entity) {
-            _context.Question.Add(entity);
-            _context.SaveChanges();
+            DatabaseContext context = new DatabaseContext();
+            context.Question.Add(entity);
+            context.SaveChanges();
             
             Hasher hasher = new Hasher();
             entity.Code = hasher.HashCode(entity.Id);
@@ -12,32 +13,38 @@ namespace Zaly.Models.Database {
         }
 
         public override void Delete(int id) {
+            DatabaseContext context = new DatabaseContext();
             var Question = FindById(id);
             if (Question is null) {
                 return;
             }
-            _context.Question.Remove(Question);
-            _context.SaveChanges(); 
+            context.Question.Remove(Question);
+            context.SaveChanges(); 
         }
 
         public List<MultipartAnswer> GetMultipartAnswersForQuestion(int QuestionId) {
-            return _context.MultipartAnswer.FromSql($"SELECT * FROM MultipartAnswer ma WHERE ma.QuestionId = {QuestionId}").ToList();
+            DatabaseContext context = new DatabaseContext();
+            return context.MultipartAnswer.FromSql($"SELECT * FROM MultipartAnswer ma WHERE ma.QuestionId = {QuestionId}").ToList();
         }
 
         public override void Delete(Question entity) {
-            _context.Question.Remove(entity);
-            _context.SaveChanges();
+            DatabaseContext context = new DatabaseContext();
+            context.Question.Remove(entity);
+            context.SaveChanges();
         }
 
         public override Question? FindById(int id) {
-            return _context.Question.Find(id);
+            DatabaseContext context = new DatabaseContext();
+            return context.Question.Find(id);
         }
 
         public override List<Question> GetAll() {
-            return _context.Question.ToList();
+            DatabaseContext context = new DatabaseContext();
+            return context.Question.ToList();
         }
         public override void Update(int id, Question entity) {
-            var dbQuestion = _context.Question.Find(id);
+            DatabaseContext context = new DatabaseContext();
+            var dbQuestion = context.Question.Find(id);
             if (dbQuestion is null) {
                 return;
             }
@@ -48,17 +55,25 @@ namespace Zaly.Models.Database {
             dbQuestion.Points = entity.Points;
             dbQuestion.Img = entity.Img;
 
-            _context.SaveChanges();
+            context.SaveChanges();
         }
         public Question? FindByCode(string code) {
-            var codeList = _context.Question.FromSql($"SELECT * FROM Question WHERE code = {code}").ToList();
+            DatabaseContext context = new DatabaseContext();
+            //var codeList = context.Question.FromSql($"SELECT * FROM Question WHERE code = {code}").ToList();
+            var codeList = context.Question.Where(q => q.Code == code).ToList();
             if (codeList.Count != 1) {
                 return null;
             }
             return codeList[0];
         }
         public List<Question> GetQuestionsForGivenUser(int userId) {
-            return _context.Question.FromSql($"SELECT DISTINCT q.* FROM Question q INNER JOIN UserToQuestion uq on q.Id = uq.QuestionId INNER JOIN User u on u.Id = uq.UserId WHERE u.Id = {userId}").ToList();
+            DatabaseContext context = new DatabaseContext();
+            //return context.Question.FromSql($"SELECT DISTINCT q.* FROM Question q INNER JOIN UserToQuestion uq on q.Id = uq.QuestionId INNER JOIN User u on u.Id = uq.UserId WHERE u.Id = {userId}").ToList();
+            return (from q in context.Question
+                    join utq in context.UserToQuestion on q.Id equals utq.QuestionId
+                    join u in context.User on utq.UserId equals u.Id
+                    where u.Id == userId
+                    select q).ToList();
         }
     }
 }

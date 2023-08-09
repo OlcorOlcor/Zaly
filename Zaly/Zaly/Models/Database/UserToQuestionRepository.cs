@@ -3,42 +3,50 @@
 namespace Zaly.Models.Database {
     public sealed class UserToQuestionRepository : DatabaseRepository<UserToQuestion> {
         public override void Add(UserToQuestion entity) {
-            _context.UserToQuestion.Add(entity);
-            _context.SaveChanges();
+            DatabaseContext context = new DatabaseContext();
+            context.UserToQuestion.Add(entity);
+            context.SaveChanges();
         }
 
         public override void Delete(int id) {
+            DatabaseContext context = new DatabaseContext();
             var UserToQuestion = FindById(id);
             if (UserToQuestion is null) {
                 return;
             }
-            _context.UserToQuestion.Remove(UserToQuestion);
-            _context.SaveChanges();
+            context.UserToQuestion.Remove(UserToQuestion);
+            context.SaveChanges();
         }
 
         public override void Delete(UserToQuestion entity) {
-            _context.UserToQuestion.Remove(entity);
-            _context.SaveChanges();
+            DatabaseContext context = new DatabaseContext();
+            context.UserToQuestion.Remove(entity);
+            context.SaveChanges();
         }
 
         public override UserToQuestion? FindById(int id) {
-            return _context.UserToQuestion.Find(id);
+            DatabaseContext context = new DatabaseContext();
+            return context.UserToQuestion.Find(id);
         }
 
         public override List<UserToQuestion> GetAll() {
-            return _context.UserToQuestion.ToList();
+            DatabaseContext context = new DatabaseContext();
+            return context.UserToQuestion.ToList();
         }
         public override void Update(int id, UserToQuestion entity) {
-			var dbUserToQuestion = _context.UserToQuestion.Find(id);
+            DatabaseContext context = new DatabaseContext();
+            var dbUserToQuestion = context.UserToQuestion.Find(id);
 			if (dbUserToQuestion is null) {
 				return;
 			}
 			dbUserToQuestion.Completed = entity.Completed;
 
-			_context.SaveChanges();
+			context.SaveChanges();
 		}
         public UserToQuestion? FindByFk(int userId, int questionId) {
-            var rows = _context.UserToQuestion.FromSql($"SELECT * FROM UserToQuestion WHERE UserId = {userId} AND QuestionId = {questionId}").ToList();
+            DatabaseContext context = new DatabaseContext();
+            //var rows = context.UserToQuestion.FromSql($"SELECT * FROM UserToQuestion WHERE UserId = {userId} AND QuestionId = {questionId}").ToList();
+            var rows = context.UserToQuestion.Where(utq => utq.UserId == userId && utq.QuestionId == questionId).ToList();
             if (rows.Count != 1) {
                 return null;
             }

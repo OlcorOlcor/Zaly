@@ -6,52 +6,65 @@ namespace Zaly.Models.Database
     {
         public override void Add(Team entity)
         {
-            _context.Team.Add(entity);
-            _context.SaveChanges();
+            DatabaseContext context = new DatabaseContext();
+            context.Team.Add(entity);
+            context.SaveChanges();
         }
         public List<User> GetTeamUsers(Team entity)
         {
-            return _context.User.FromSql($"SELECT * FROM USER u WHERE u.TeamId = {entity.Id}").ToList();
+            DatabaseContext context = new DatabaseContext();
+            //return context.User.FromSql($"SELECT * FROM USER u WHERE u.TeamId = {entity.Id}").ToList();
+            return context.User.Where(u => u.TeamId == entity.Id).ToList();
         }
         public override void Delete(int id)
         {
+            DatabaseContext context = new DatabaseContext();
             var Team = FindById(id);
             if (Team is null)
             {
                 return;
             }
-            _context.Team.Remove(Team);
-            _context.SaveChanges();
+            context.Team.Remove(Team);
+            context.SaveChanges();
         }
 
         public override void Delete(Team entity)
         {
-            _context.Team.Remove(entity);
-            _context.SaveChanges();
+            DatabaseContext context = new DatabaseContext();
+            context.Team.Remove(entity);
+            context.SaveChanges();
         }
 
         public override Team? FindById(int id)
         {
-            return _context.Team.Find(id);
+            DatabaseContext context = new DatabaseContext();
+            return context.Team.Find(id);
         }
 
         public override List<Team> GetAll()
         {
-            return _context.Team.ToList();
+            DatabaseContext context = new DatabaseContext();
+            return context.Team.ToList();
         }
         public override void Update(int id, Team entity)
         {
-            var dbTeam = _context.Team.Find(id);
+            DatabaseContext context = new DatabaseContext();
+            var dbTeam = context.Team.Find(id);
             if (dbTeam is null)
             {
                 return;
             }
             dbTeam.Name = entity.Name;
 
-            _context.SaveChanges();
+            context.SaveChanges();
         }
         public int GetTeamPoints(int teamId) {
-            return _context.User.FromSql($"SELECT u.* FROM User u INNER JOIN Team t on t.Id = u.TeamId WHERE t.Id = {teamId}").Sum(x => x.Points);
+            DatabaseContext context = new DatabaseContext();
+            //return context.User.FromSql($"SELECT u.* FROM User u INNER JOIN Team t on t.Id = u.TeamId WHERE t.Id = {teamId}").Sum(x => x.Points);
+            return (from u in context.User
+                    join t in context.Team on u.TeamId equals t.Id
+                    where t.Id == teamId
+                    select u).Sum(u => u.Points);
         }
     }
 }
