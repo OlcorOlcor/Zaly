@@ -2,6 +2,9 @@
 
 namespace Zaly.Models.Database {
     public sealed class QuestionRepository : DatabaseRepository<Question> {
+        public QuestionRepository(DatabaseContext context) {
+            _context = context;
+        }
         public override void Add(Question entity) {
             DatabaseContext context = new DatabaseContext();
             context.Question.Add(entity);

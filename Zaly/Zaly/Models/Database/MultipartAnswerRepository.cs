@@ -2,6 +2,9 @@
 
 namespace Zaly.Models.Database {
     public sealed class MultipartAnswerRepository : DatabaseRepository<MultipartAnswer> {
+        public MultipartAnswerRepository(DatabaseContext context) {
+            _context = context;
+        }
         public override void Add(MultipartAnswer entity) {
             DatabaseContext context = new DatabaseContext();
             context.MultipartAnswer.Add(entity);

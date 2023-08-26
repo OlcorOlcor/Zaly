@@ -4,6 +4,9 @@ namespace Zaly.Models.Database
 {
     public sealed class TeamRepository : DatabaseRepository<Team>
     {
+        public TeamRepository(DatabaseContext context) {
+            _context = context;
+        }
         public override void Add(Team entity)
         {
             DatabaseContext context = new DatabaseContext();

@@ -5,6 +5,9 @@ namespace Zaly.Models.Database
 {
     public sealed class UserRepository : DatabaseRepository<User>
     {
+        public UserRepository(DatabaseContext context) {
+            _context = context;
+        }
         public override void Add(User entity)
         {
             DatabaseContext context = new DatabaseContext();

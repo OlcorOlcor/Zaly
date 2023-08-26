@@ -4,6 +4,9 @@ namespace Zaly.Models.Database
 {
     public sealed class AdminRepository : DatabaseRepository<Admin>
     {
+        public AdminRepository(DatabaseContext context) {
+            _context = context;
+        }
         public override void Add(Admin entity)
         {   
             DatabaseContext context = new DatabaseContext();

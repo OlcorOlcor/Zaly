@@ -19,6 +19,7 @@ namespace Zaly {
             services.AddScoped<IRepository<MultipartAnswer>,  MultipartAnswerRepository>();
 
             services.AddSingleton<Hasher>();
+            services.AddSingleton<DatabaseContext>();
 			// Add services to the container.
 			var app = builder.Build();
 
