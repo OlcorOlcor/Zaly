@@ -4,8 +4,10 @@ namespace Zaly.Models.Database
 {
     public sealed class AdminRepository : DatabaseRepository<Admin>
     {
-        public AdminRepository(DatabaseContext context) {
+        private Hasher _hasher;
+        public AdminRepository(DatabaseContext context, Hasher hasher) {
             _context = context;
+            _hasher = hasher;
         }
         public override void Add(Admin entity)
         {   
@@ -61,8 +63,7 @@ namespace Zaly.Models.Database
                 return null;
             }
             var admin = admins[0];
-            Hasher pm = new Hasher();
-            if (pm.VerifyPassword(Password, admin.Password.Substring(0, admin.Password.Length / 2), admin.Password.Substring(admin.Password.Length / 2, admin.Password.Length / 2)))
+            if (_hasher.VerifyPassword(Password, admin.Password.Substring(0, admin.Password.Length / 2), admin.Password.Substring(admin.Password.Length / 2, admin.Password.Length / 2)))
             {
                 return admin;
             }

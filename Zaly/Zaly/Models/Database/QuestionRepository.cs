@@ -2,15 +2,16 @@
 
 namespace Zaly.Models.Database {
     public sealed class QuestionRepository : DatabaseRepository<Question> {
-        public QuestionRepository(DatabaseContext context) {
+        private Hasher _hasher;
+        public QuestionRepository(DatabaseContext context, Hasher hasher) {
             _context = context;
+            _hasher = hasher;
         }
         public override void Add(Question entity) {
             _context.Question.Add(entity);
             _context.SaveChanges();
             
-            Hasher hasher = new Hasher();
-            entity.Code = hasher.HashCode(entity.Id);
+            entity.Code = _hasher.HashCode(entity.Id);
             Update(entity.Id, entity);
         }
 

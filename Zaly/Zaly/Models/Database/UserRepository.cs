@@ -1,7 +1,10 @@
 ﻿namespace Zaly.Models.Database {
     public sealed class UserRepository : DatabaseRepository<User> {
-        public UserRepository(DatabaseContext context) {
+        private Hasher _hasher;
+        public UserRepository(DatabaseContext context, Hasher hasher) {
             _context = context;
+            _hasher = hasher;
+
         }
         public override void Add(User entity) {
             _context.User.Add(entity);
@@ -56,8 +59,7 @@
                 return null;
             }
             var user = users[0];
-            Hasher pm = new Hasher();
-            if (pm.VerifyPassword(Password, user.Password.Substring(0, user.Password.Length / 2), user.Password.Substring(user.Password.Length / 2, user.Password.Length / 2))) {
+            if (_hasher.VerifyPassword(Password, user.Password.Substring(0, user.Password.Length / 2), user.Password.Substring(user.Password.Length / 2, user.Password.Length / 2))) {
                 return user;
             }
             return null;
