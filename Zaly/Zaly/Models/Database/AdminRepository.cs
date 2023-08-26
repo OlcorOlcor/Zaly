@@ -9,45 +9,39 @@ namespace Zaly.Models.Database
         }
         public override void Add(Admin entity)
         {   
-            DatabaseContext context = new DatabaseContext();
-            context.Admin.Add(entity);
-            context.SaveChanges();
+            _context.Admin.Add(entity);
+            _context.SaveChanges();
         }
 
         public override void Delete(int id)
         {
-            DatabaseContext context = new DatabaseContext();
             var admin = FindById(id);
             if (admin is null)
             {
                 return;
             }
-            context.Admin.Remove(admin);
-            context.SaveChanges();
+            _context.Admin.Remove(admin);
+            _context.SaveChanges();
         }
 
         public override void Delete(Admin entity)
         {
-            DatabaseContext context = new DatabaseContext();
-            context.Admin.Remove(entity);
-            context.SaveChanges();
+            _context.Admin.Remove(entity);
+            _context.SaveChanges();
         }
 
         public override Admin? FindById(int id)
         {
-            DatabaseContext context = new DatabaseContext();
-            return context.Admin.Find(id);
+            return _context.Admin.Find(id);
         }
 
         public override List<Admin> GetAll()
         {
-            DatabaseContext context = new DatabaseContext();
-            return context.Admin.ToList();
+            return _context.Admin.ToList();
         }
         public override void Update(int id, Admin entity)
         {
-            DatabaseContext context = new DatabaseContext();
-            var dbAdmin = context.Admin.Find(id);
+            var dbAdmin = _context.Admin.Find(id);
             if (dbAdmin is null)
             {
                 return;
@@ -56,14 +50,12 @@ namespace Zaly.Models.Database
             dbAdmin.Surname = entity.Surname;
             dbAdmin.Password = entity.Password;
 
-            context.SaveChanges();
+            _context.SaveChanges();
         }
 
         public Admin? Login(string Login, string Password)
         {
-            DatabaseContext context = new DatabaseContext();
-            //var admins = context.Admin.FromSql($"Select * from Admin where Login = {Login}").ToList();
-            var admins = context.Admin.Where(a => a.Login == Login).ToList();
+            var admins = _context.Admin.Where(a => a.Login == Login).ToList();
             if (admins.Count() != 1)
             {
                 return null;

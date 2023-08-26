@@ -6,9 +6,8 @@ namespace Zaly.Models.Database {
             _context = context;
         }
         public override void Add(MultipartAnswer entity) {
-            DatabaseContext context = new DatabaseContext();
-            context.MultipartAnswer.Add(entity);
-            context.SaveChanges();
+            _context.MultipartAnswer.Add(entity);
+            _context.SaveChanges();
         }
 
         public override void Delete(int id) {
@@ -16,29 +15,24 @@ namespace Zaly.Models.Database {
             if (MultipartAnswer is null) {
                 return;
             }
-            DatabaseContext context = new DatabaseContext();
-            context.MultipartAnswer.Remove(MultipartAnswer);
-            context.SaveChanges();
+            _context.MultipartAnswer.Remove(MultipartAnswer);
+            _context.SaveChanges();
         }
 
         public override void Delete(MultipartAnswer entity) {
-            DatabaseContext context = new DatabaseContext();
-            context.MultipartAnswer.Remove(entity);
-            context.SaveChanges();
+            _context.MultipartAnswer.Remove(entity);
+            _context.SaveChanges();
         }
 
         public override MultipartAnswer? FindById(int id) {
-            DatabaseContext context = new DatabaseContext();
-            return context.MultipartAnswer.Find(id);
+            return _context.MultipartAnswer.Find(id);
         }
 
         public override List<MultipartAnswer> GetAll() {
-            DatabaseContext context = new DatabaseContext();
-            return context.MultipartAnswer.ToList();
+            return _context.MultipartAnswer.ToList();
         }
         public override void Update(int id, MultipartAnswer entity) {
-            DatabaseContext context = new DatabaseContext();
-            var dbMultipartAnswer = context.MultipartAnswer.Find(id);
+            var dbMultipartAnswer = _context.MultipartAnswer.Find(id);
             if (dbMultipartAnswer is null) {
                 return;
             }
@@ -46,12 +40,10 @@ namespace Zaly.Models.Database {
             dbMultipartAnswer.Correct = entity.Correct;
             dbMultipartAnswer.QuestionId= entity.QuestionId;
 
-            context.SaveChanges();
+            _context.SaveChanges();
         }
         public List<MultipartAnswer> FindByFk(int Id) {
-            DatabaseContext context = new DatabaseContext();
-            //return context.MultipartAnswer.FromSql($"SELECT * FROM MultipartAnswer WHERE QuestionId = {Id}").ToList();
-            return context.MultipartAnswer.Where(ma => ma.QuestionId == Id).ToList();
+            return _context.MultipartAnswer.Where(ma => ma.QuestionId == Id).ToList();
         }
     }
 }
