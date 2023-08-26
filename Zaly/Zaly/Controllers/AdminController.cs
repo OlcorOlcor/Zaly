@@ -5,11 +5,20 @@ using Zaly.Models.Database;
 namespace Zaly.Controllers
 {
     public class AdminController : Controller {
-		readonly private UserRepository _userRepository = new();
-		readonly private AdminRepository _adminRepository = new();
-        readonly private QuestionRepository _questionRepository = new();
-        readonly private MultipartAnswerRepository _multipartAnswerRepository = new();
-        readonly private TeamRepository _teamRepository = new();
+        readonly private UserRepository _userRepository;
+        readonly private AdminRepository _adminRepository;
+        readonly private QuestionRepository _questionRepository;
+        readonly private MultipartAnswerRepository _multipartAnswerRepository;
+        readonly private TeamRepository _teamRepository;
+        readonly private Hasher _hasher;
+        public AdminController(UserRepository userRepository, AdminRepository adminRepository, QuestionRepository questionRepository, MultipartAnswerRepository multipartAnswerRepository, TeamRepository teamRepository, Hasher hasher) {
+            _userRepository = userRepository;
+            _adminRepository = adminRepository;
+            _questionRepository = questionRepository;
+            _multipartAnswerRepository = multipartAnswerRepository;
+            _teamRepository = teamRepository;
+            _hasher = hasher;
+        }
         private bool CheckLogin() {
             if (HttpContext.Session.GetString("AdminLogin") != "true") {
                 ViewBag.Logged = false;
@@ -42,8 +51,7 @@ namespace Zaly.Controllers
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
             }
-            Hasher pm = new Hasher();
-			var hashedPassword = pm.HashPassword(user.Name.ToLower() + user.Surname.ToLower(), out string salt);
+			var hashedPassword = _hasher.HashPassword(user.Name.ToLower() + user.Surname.ToLower(), out string salt);
 			user.Login = user.Name.ToLower() + user.Surname.ToLower();
 			user.Password = hashedPassword + salt;
 			_userRepository.Add(user);
