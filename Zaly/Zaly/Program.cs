@@ -10,11 +10,6 @@ namespace Zaly {
 			services.AddControllersWithViews();
             services.AddSession();
 
-            //services.AddScoped(typeof(IRepository<User>),typeof(UserRepository));
-            //services.AddScoped(typeof(IRepository<Question>),typeof(QuestionRepository));
-            //services.AddScoped(typeof(IRepository<UserToQuestion>),typeof(UserToQuestionRepository));
-            //services.AddScoped(typeof(IRepository<TeamRepository>),typeof(TeamRepository));
-            //services.AddScoped(typeof(IRepository<MultipartAnswer>),typeof(MultipartAnswerRepository));
             
             services.AddScoped<IRepository<Admin>, AdminRepository>();
             services.AddScoped<IRepository<User>, UserRepository>();
@@ -22,6 +17,8 @@ namespace Zaly {
             services.AddScoped<IRepository<UserToQuestion>, UserToQuestionRepository>();
             services.AddScoped<IRepository<Team>, TeamRepository>();
             services.AddScoped<IRepository<MultipartAnswer>,  MultipartAnswerRepository>();
+
+            services.AddSingleton<Hasher>();
 			// Add services to the container.
 			var app = builder.Build();
 

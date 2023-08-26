@@ -13,12 +13,14 @@ namespace Zaly.Controllers
 		private readonly IRepository<UserToQuestion> _userToQuestionRepository;
 		private readonly IRepository<MultipartAnswer> _multipartAnswerRepository;
 		private readonly IRepository<Team> _teamRepository;
-		public UserController(IRepository<User> userRepository, IRepository<Question> questionRepository, IRepository<UserToQuestion> userToQuestionRepository, IRepository<MultipartAnswer> multipartAnswerRepository, IRepository<Team> teamRepository) {
+		private readonly Hasher _hasher;
+		public UserController(IRepository<User> userRepository, IRepository<Question> questionRepository, IRepository<UserToQuestion> userToQuestionRepository, IRepository<MultipartAnswer> multipartAnswerRepository, IRepository<Team> teamRepository, Hasher hasher) {
             _userRepository = userRepository;
             _questionRepository = questionRepository;
             _userToQuestionRepository = userToQuestionRepository;
             _multipartAnswerRepository = multipartAnswerRepository;
             _teamRepository = teamRepository;
+            _hasher = hasher;
         }
 
         private bool CheckLogin() {
@@ -92,8 +94,7 @@ namespace Zaly.Controllers
 			if (newPassword != newPasswordAgain) {
 				return RedirectToAction("ChangePassword");
 			}					
-			Hasher pm = new Hasher();
-			var hashedPassword = pm.HashPassword(newPassword, out string salt);
+			var hashedPassword = _hasher.HashPassword(newPassword, out string salt);
 			user.Password = hashedPassword + salt;
 			_userRepository.Update(user.Id, user);
 			return RedirectToAction("Index");
