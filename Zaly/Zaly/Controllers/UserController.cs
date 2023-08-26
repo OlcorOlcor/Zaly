@@ -8,11 +8,19 @@ using Zaly.Models.Database;
 namespace Zaly.Controllers
 {
     public class UserController : Controller {
-		private readonly UserRepository _userRepository = new();
-		private readonly QuestionRepository _questionRepository = new();
-		private readonly UserToQuestionRepository _userToQuestionRepository = new();
-		private readonly MultipartAnswerRepository _multipartAnswerRepository = new();
-		private readonly TeamRepository _teamRepository = new();
+		private readonly IRepository<User> _userRepository;
+		private readonly IRepository<Question> _questionRepository;
+		private readonly IRepository<UserToQuestion> _userToQuestionRepository;
+		private readonly IRepository<MultipartAnswer> _multipartAnswerRepository;
+		private readonly IRepository<Team> _teamRepository;
+		public UserController(IRepository<User> userRepository, IRepository<Question> questionRepository, IRepository<UserToQuestion> userToQuestionRepository, IRepository<MultipartAnswer> multipartAnswerRepository, IRepository<Team> teamRepository) {
+            _userRepository = userRepository;
+            _questionRepository = questionRepository;
+            _userToQuestionRepository = userToQuestionRepository;
+            _multipartAnswerRepository = multipartAnswerRepository;
+            _teamRepository = teamRepository;
+        }
+
         private bool CheckLogin() {
             if (HttpContext.Session.GetString("login") != "true") {
 				ViewBag.Logged = false;
@@ -27,10 +35,10 @@ namespace Zaly.Controllers
 				return RedirectToAction("Login");
 			}
 			int userId = (int)HttpContext.Session.GetInt32("userid")!;
-			var questions = _questionRepository.GetQuestionsForGivenUser(userId);
+			var questions = ((QuestionRepository)_questionRepository).GetQuestionsForGivenUser(userId);
 			List<bool> completed = new();
 			foreach (var question in questions) {
-				var link = _userToQuestionRepository.FindByFk(userId, question.Id);
+				var link = ((UserToQuestionRepository)_userToQuestionRepository).FindByFk(userId, question.Id);
 				completed.Add(link!.Completed);
 			}
 			ViewBag.Questions = questions;
@@ -51,7 +59,7 @@ namespace Zaly.Controllers
 			var teams = _teamRepository.GetAll();
 			List<int> teamPoints = new();
 			foreach (var team in teams) {
-				teamPoints.Add(_teamRepository.GetTeamPoints(team.Id));
+				teamPoints.Add(((TeamRepository)_teamRepository).GetTeamPoints(team.Id));
 			}
 			ViewBag.Users = users;
 			ViewBag.Teams = teams;
@@ -77,7 +85,7 @@ namespace Zaly.Controllers
 				return RedirectToAction("Login");
 			}
 			
-			var user = _userRepository.Login(ViewBag.LoggedInUser.Login, oldPassword);
+			var user = ((UserRepository)_userRepository).Login(ViewBag.LoggedInUser.Login, oldPassword);
             if (user is null) {
 				return RedirectToAction("ChangePassword");
 			}
@@ -102,7 +110,7 @@ namespace Zaly.Controllers
 		}
 		[HttpPost]
 		public IActionResult Login(string Login, string Password) {
-			var user = _userRepository.Login(Login, Password);
+			var user = ((UserRepository)_userRepository).Login(Login, Password);
 			if (user is null) {
 				ViewBag.LoginFailed = true;
 				ViewBag.Login = Login;
@@ -127,12 +135,12 @@ namespace Zaly.Controllers
             if (!CheckLogin()) {
                 return RedirectToAction("Login");
             }
-            var question = _questionRepository.FindByCode(code);
+            var question = ((QuestionRepository)_questionRepository).FindByCode(code);
 
 			if (question is null || question.Multipart) {
 				return RedirectToAction("Index");
 			}
-			var link = _userToQuestionRepository.FindByFk((int)HttpContext.Session.GetInt32("userid")!, question.Id);
+			var link = ((UserToQuestionRepository)_userToQuestionRepository).FindByFk((int)HttpContext.Session.GetInt32("userid")!, question.Id);
 			if (link is null || link.Completed) {
 				return RedirectToAction("Index");
 			}
@@ -168,7 +176,7 @@ namespace Zaly.Controllers
 			}
 			user!.Points += question.Points;
             _userRepository.Update(user.Id, user);
-			var link = _userToQuestionRepository.FindByFk(user.Id, question.Id);
+			var link = ((UserToQuestionRepository)_userToQuestionRepository).FindByFk(user.Id, question.Id);
 			if (link == null) {
 				return RedirectToAction("Index");
 			}
@@ -181,15 +189,15 @@ namespace Zaly.Controllers
 			if (!CheckLogin()) {
 				return RedirectToAction("Login");
 			}
-			var question = _questionRepository.FindByCode(code);
+			var question = ((QuestionRepository)_questionRepository).FindByCode(code);
 			if (question == null || !question.Multipart) {
 				return RedirectToAction("Index");
 			}
-			var link = _userToQuestionRepository.FindByFk((int)HttpContext.Session.GetInt32("userid")!, question.Id);
+			var link = ((UserToQuestionRepository)_userToQuestionRepository).FindByFk((int)HttpContext.Session.GetInt32("userid")!, question.Id);
 			if (link is null || link.Completed) {
 				return RedirectToAction("Index");
 			}
-			var options = _multipartAnswerRepository.FindByFk(question.Id);
+			var options = ((MultipartAnswerRepository)_multipartAnswerRepository).FindByFk(question.Id);
 			//SHUFFLE LIST - TODO: extract
 			Random rng = new Random();
             int n = options.Count;
@@ -226,7 +234,7 @@ namespace Zaly.Controllers
                 ViewBag.Message = "Nesprávná odpověď";
                 user!.Points--;
                 _userRepository.Update(user.Id, user);
-                var options = _multipartAnswerRepository.FindByFk(question.Id);
+                var options = ((MultipartAnswerRepository)_multipartAnswerRepository).FindByFk(question.Id);
 				ViewBag.Options = options;
                 if (question.Img is not null || question.Img != "") {
                     ViewBag.ImgPath = $"/Img/{question.Img}";
@@ -236,7 +244,7 @@ namespace Zaly.Controllers
                 }
                 return View();
             }
-            var link = _userToQuestionRepository.FindByFk(user.Id, question.Id);
+            var link = ((UserToQuestionRepository)_userToQuestionRepository).FindByFk(user!.Id, question.Id);
             if (link == null || link.Completed) {
                 return RedirectToAction("Index");
             }
@@ -257,11 +265,11 @@ namespace Zaly.Controllers
         }
 		private void RegisterQuestion(string code) {
 			var user = _userRepository.FindById((int)HttpContext.Session.GetInt32("userid")!);
-			var question = _questionRepository.FindByCode(code);
+			var question = ((QuestionRepository)_questionRepository).FindByCode(code);
 			if (user is null || question is null) {
 				return;
 			}
-			if (_userToQuestionRepository.FindByFk(user.Id, question.Id) is not null) {
+			if (((UserToQuestionRepository)_userToQuestionRepository).FindByFk(user.Id, question.Id) is not null) {
 				return;
 			}
 			var utq = new UserToQuestion();
